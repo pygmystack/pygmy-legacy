@@ -7,7 +7,9 @@ module Dory
     end
 
     def self.ubuntu_resolv_file
-      '/etc/resolvconf/resolv.conf.d/base'
+      #'/etc/resolvconf/resolv.conf.d/base'
+      # For now, use the common_resolv_file
+      self.common_resolv_file
     end
 
     def self.file_comment
