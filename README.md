@@ -55,7 +55,7 @@ Default config file which should be placed at `~/.dory.yml` (can be generated wi
   # doesn't exist.
   :dnsmasq:
     :enabled: true
-    :domain: docker      # domain that will be listend for
+    :domain: docker      # domain that will be listened for
     :address: 127.0.0.1  # address returned for queries against domain
     :container_name: dory_dnsmasq
   :nginx_proxy:
@@ -72,7 +72,9 @@ No. Well, maybe sort of, but not really.  [Dinghy](https://github.com/codekitche
 
 ## Are there any reasons to run full dinghy on Linux?
 
-Right now no, but I am intrigued at the possibilities of using dinghy on Linux to drive a cloud-based docker engine.  We'll stay tuned.
+Generally speaking, IMHO, no.  The native experience is superior.  However, for some reason maybe you'd prefer to not have docker on your local machine?  Maybe you'd rather run it in a VM?  If that describes you, then maybe you want full dinghy.
+
+I am intrigued at the possibilities of using dinghy on Linux to drive a cloud-based docker engine.  For that, stay tuned.
 
 ## Why didn't you just fork dinghy?
 
@@ -81,6 +83,38 @@ That was actually my first approach, and I considered it quite a bit.  As I went
 ## What if I'm developing on a cloud server?
 
 You do this too!?  Well fine hacker, it's your lucky day because dory has you covered.  You can run the nginx proxy on the cloud server and the dnsmasq/resolver locally.  Here's how:
+
+* Install dory on both client and server:
+```
+gem install dory
+```
+* Gen a base config file:
+```
+dory config-file
+```
+* On the local machine, disable the nginx-proxy, and set the dnsmasq address to that of your cloud server:
+```
+  :dnsmasq:
+    :enabled: true
+    :domain: docker      # domain that will be listened for
+    :address: <cloud-server-ip>  # address returned for queries against domain
+    :container_name: dory_dnsmasq
+  :nginx_proxy:
+    :enabled: false
+    :container_name: dory_dinghy_http_proxy
+```
+* On the server, disable resolv and dnsmasq:
+```
+  :dnsmasq:
+    :enabled: false
+    :domain: docker      # domain that will be listened for
+    :address: 127.0.0.1  # address returned for queries against domain
+    :container_name: dory_dnsmasq
+  :resolv:
+    :enabled: false
+    :nameserver: 127.0.0.1
+```
+* Profit!
 
 ## Built on:
 
