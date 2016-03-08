@@ -1,0 +1,210 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'yaml'
+
+require 'dory'
+
+class DoryBin < Thor
+  class_option :verbose, type: :boolean, aliases: 'v', default: false
+
+  desc 'up', 'Bring up dory services (nginx-proxy, dnsmasq, resolv)'
+  long_desc <<-LONGDESC
+    Bring up dory services (nginx-proxy, dnsmasq, resolv)
+
+    When run, the docker container for the nginx proxy is started,
+    along with a local dnsmasq instance to resolve DNS requests
+    for your custom domain to the nginx proxy.  The local resolver
+    will also be configured to use the dnsmasq instance as a nameserver
+
+    You can optionally pass in [-s|--server] or [-c|--client] if doing
+    development on a cloud server.  This will tell dory to only bring
+    up the nginx proxy container if passed --server or only the
+    dnsmasq/resolv if passed --client.  If both server and client
+    are passed, it is equivalent to a naked 'up'
+
+    > $ dory up [-s|--server] [-c|--client]
+  LONGDESC
+  option :client, type: :boolean, aliases: 'c', default: false
+  option :server, type: :boolean, aliases: 's', default: false
+  def up
+    exec_up(options)
+  end
+
+  desc 'down', 'Stop all dory services'
+  long_desc <<-LONGDESC
+    Stops all dory services.  Can optionally pass [-d|--destroy]
+    to destroy the containers when they stop.
+
+    > $ dory down [-d|--destroy]
+  LONGDESC
+  option :destroy, type: :boolean, aliases: 'd', default: true
+  def down
+    exec_down(options)
+  end
+
+  desc 'version', 'Check current installed version of dory'
+  def version
+    puts "Dory - Version: #{Dory::VERSION}"
+  end
+
+  desc 'restart', 'Stop and restart all dory services'
+  long_desc <<-LONGDESC
+    Stop and restart dory services (nginx-proxy, dnsmasq, resolv)
+
+    > $ dory restart [-d|--destroy] [-s|--server] [-c|--client]
+  LONGDESC
+  option :client, type: :boolean, aliases: 'c', default: false
+  option :server, type: :boolean, aliases: 's', default: false
+  option :destroy, type: :boolean, aliases: 'd', default: true
+  def restart
+    exec_down(options)
+    exec_up(options)
+  end
+
+  desc 'status', 'Report status of the dory services'
+  long_desc <<-LONGDESC
+    Checks the current status of the services managed by dory.
+    This includes nginx-proxy, dnsmasq, and resolv
+
+    > $ dory status
+  LONGDESC
+  def status
+    exec_status(options)
+  end
+
+  desc 'config-file', 'Write a default config file'
+  long_desc <<-LONGDESC
+    Writes a dory config file to #{Dory::Config.filename}
+    containing the default settings.  This can then be configured
+    as preferred.
+  LONGDESC
+  def config_file
+    exec_config_file(options)
+  end
+
+  private
+
+  def exec_config_file(options)
+    if File.exist?(Dory::Config.filename)
+      print "A config file already exists at #{Dory::Config.filename}.  Overwrite with default settings? (Y/N): ".yellow
+      conf = STDIN.gets.chomp
+      unless conf =~ /y/i
+        puts "User declined over-writing.  Not writing config file".red
+        return
+      end
+    end
+    puts "Writing config file to #{Dory::Config.filename}".green
+    Dory::Config.write_default_settings_file
+  end
+
+  def exec_up(options)
+    full = (!options[:server] && !options[:client]) ||
+           ( options[:server] &&  options[:client])
+
+    puts "Reading settings file at '#{Dory::Config.filename}'".green if options[:verbose]
+    settings = Dory::Config.settings
+    if settings[:dory][:nginx_proxy][:enabled]
+      puts "nginx_proxy enabled in config file".green if options[:verbose]
+      if Dory::Proxy.start
+        puts "Successfully started nginx proxy".green
+      else
+        puts "Error starting nginx proxy".red
+      end
+    else
+      puts "nginx_proxy disabled in config file".yellow if options[:verbose]
+    end
+
+    if settings[:dory][:dnsmasq][:enabled]
+      puts "dnsmasq enabled in config file".green if options[:verbose]
+      if Dory::Dnsmasq.start
+        puts "Successfully started dnsmasq".green
+      else
+        puts "Error starting dnsmasq".red
+      end
+    else
+      puts "dnsmasq disabled in config file".yellow if options[:verbose]
+    end
+
+    if settings[:dory][:resolv][:enabled]
+      if Dory::Resolv.configure
+        puts "Successfully configured local resolver".green
+      else
+        puts "Error configuring local resolver".red
+      end
+      puts "resolv enabled in config file".green if options[:verbose]
+    else
+      puts "resolv disabled in config file".yellow if options[:verbose]
+    end
+  end
+
+  def exec_status(options)
+    settings = Dory::Config.settings
+
+    if Dory::Proxy.running?
+      puts "[*] Nginx proxy:  Running as docker container #{Dory::Proxy.container_name}".green
+    elsif !settings[:dory][:nginx_proxy][:enabled]
+      puts "[*] Nginx proxy is disabled in config file".yellow
+    else
+      puts "[*] Nginx proxy is not running".red
+    end
+
+    if Dory::Dnsmasq.running?
+      puts "[*] Dnsmasq:  Running as docker container #{Dory::Dnsmasq.container_name}".green
+    elsif !settings[:dory][:dnsmasq][:enabled]
+      puts "[*] Dnsmasq is disabled in config file".yellow
+    else
+      puts "[*] Dnsmasq is not running".red
+    end
+
+    if Dory::Resolv.has_our_nameserver?
+      puts "[*] Resolv:  configured with nameserver #{}".green
+    elsif !settings[:dory][:resolv][:enabled]
+      puts "[*] Resolv is disabled in config file".yellow
+    else
+      puts "[*] Resolv is not configured".red
+    end
+  end
+
+  def exec_down(options)
+    destroy = options[:destroy]
+    
+    if Dory::Resolv.clean
+      puts "nameserver removed from resolv file".green
+    else
+      puts "Unable to remove nameserver from resolv file".red
+    end
+
+    if Dory::Dnsmasq.stop
+      puts "Dnsmasq container stopped".green
+      if options[:destroy]
+        if Dory::Dnsmasq.delete
+          puts "Dnsmasq container successfully deleted".green
+        else
+          puts "Dnsmasq container failed to delete".red
+        end
+      end
+    else
+      puts "Dnsmasq container failed to stop".red
+    end
+
+    if Dory::Proxy.stop
+      puts "Nginx proxy stopped".green
+      if options[:destroy]
+        if Dory::Proxy.delete
+          puts "Nginx proxy container successfully deleted".green
+        else
+          puts "Nginx proxy container failed to delete".red
+        end
+      end
+    else
+      puts "Nginx proxy failed to stop".red
+    end
+  end
+end
+
+if !ARGV.empty? && %w[-v --version].include?(ARGV.first)
+  puts "Dory - Version: #{Dory::VERSION}"
+else
+  DoryBin.start(ARGV)
+end
