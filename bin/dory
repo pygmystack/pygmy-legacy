@@ -112,7 +112,7 @@ class DoryBin < Thor
         puts "Error starting nginx proxy".red
       end
     else
-      puts "nginx_proxy disabled in config file".yellow if options[:verbose]
+      puts "nginx_proxy disabled in config file".yellow
     end
 
     if settings[:dory][:dnsmasq][:enabled]
@@ -123,7 +123,7 @@ class DoryBin < Thor
         puts "Error starting dnsmasq".red
       end
     else
-      puts "dnsmasq disabled in config file".yellow if options[:verbose]
+      puts "dnsmasq disabled in config file".yellow
     end
 
     if settings[:dory][:resolv][:enabled]
@@ -134,7 +134,7 @@ class DoryBin < Thor
       end
       puts "resolv enabled in config file".green if options[:verbose]
     else
-      puts "resolv disabled in config file".yellow if options[:verbose]
+      puts "resolv disabled in config file".yellow
     end
   end
 
@@ -158,7 +158,7 @@ class DoryBin < Thor
     end
 
     if Dory::Resolv.has_our_nameserver?
-      puts "[*] Resolv:  configured with nameserver #{}".green
+      puts "[*] Resolv:  configured with #{Dory::Resolv.file_nameserver_line}".green
     elsif !settings[:dory][:resolv][:enabled]
       puts "[*] Resolv is disabled in config file".yellow
     else

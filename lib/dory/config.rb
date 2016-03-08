@@ -19,7 +19,7 @@ module Dory
           # doesn't exist.
           :dnsmasq:
             :enabled: true
-            :domain: docker      # domain that will be listend for
+            :domain: docker      # domain that will be listened for
             :address: 127.0.0.1  # address returned for queries against domain
             :container_name: dory_dnsmasq
           :nginx_proxy:
