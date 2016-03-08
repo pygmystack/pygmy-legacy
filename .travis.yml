@@ -1,9 +1,9 @@
 language: ruby
 rvm:
-  - "1.8.7"
-  - "1.9.2"
-  - "1.9.3"
+  - "2.1.8"
+  - "2.2.3"
   - rbx
 sudo: required
 dist: trusty
+install: ./travis/install-dependencies.sh
 script: bundle exec rspec spec
