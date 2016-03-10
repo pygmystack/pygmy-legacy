@@ -1,9 +1,13 @@
 # dory
 
-[Dory](https://github.com/FreedomBen/dory) wraps [codekitchen/dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy) and makes it easily
-available for use on Linux.  This way you can work comfortably
-side by side on [docker](https://github.com/docker/docker)/[docker-compose](https://github.com/docker/compose) with your colleagues
-who run OS X.
+[Dory](https://github.com/FreedomBen/dory) let's you forget about IP addresses and port numbers
+while you are developing you application.  Through the magic of local DNS services and nginx
+reverse proxy, you can access your app at http://<whatever-you-want>.<whatever-else>.
+
+Dory wraps [codekitchen/dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy)
+and makes it easily available for use on Linux.  This way you can work comfortably
+side by side on [docker](https://github.com/docker/docker)/[docker-compose](https://github.com/docker/compose)
+with your colleagues who run OS X.
 
 Specifically, dory will:
 
@@ -20,7 +24,8 @@ gem install dory
 
 ## Usage
 
-Dory has a small selection of commands that are hopefully intuitive.  To customize and fine-tune dory's behavior, it can be configured with a yaml config file.
+Dory has a small selection of commands that are hopefully intuitive.
+To customize and fine-tune dory's behavior, it can be configured with a yaml config file.
 
 
 ### Commands
@@ -66,23 +71,60 @@ Default config file which should be placed at `~/.dory.yml` (can be generated wi
     :nameserver: 127.0.0.1
 ```
 
+## Troubleshooting
+
+*Halp the dnsmasq container is having issues starting!*
+
+Make sure you aren't already running a dnsmasq service (or some other service) on port 53.
+Because the Linux resolv file doesn't have support for port numbers, we have to run
+on host port 53.  To make matters fun, some distros (such as those shipping with
+[NetworkManager](https://wiki.archlinux.org/index.php/NetworkManager)) will
+run a dnsmasq on 53 to perform local DNS caching.  This is nice, but it will
+conflict with Dory's dnsmasq container.  You will probably want to disable it.
+
+If using Network Manager, try commenting out `dns=dnsmasq`
+in `/etc/NetworkManager/NetworkManager.conf`.  Then restart
+NetworkManager:  `sudo service network-manager restart` or
+`sudo systemctl restart NetworkManager`
+
 ## Is this dinghy for Linux?
 
-No. Well, maybe sort of, but not really.  [Dinghy](https://github.com/codekitchen/dinghy) has a lot of responsibilities on OS X, most of which are not necessary on Linux since docker runs natively.  Something it does that can benefit linux users however, is the setup and management of an [nginx reverse HTTP proxy](https://www.nginx.com/resources/admin-guide/reverse-proxy/).  Using full dinghy on Linux for local development doesn't really make sense to me, but using a reverse proxy does.  Furthermore, if you work with other devs who run Dinghy on OS X, you will have to massage your (docker-compose)[https://docs.docker.com/compose/] files to avoid conflicting.  By using  [dory](https://github.com/FreedomBen/dory), you can safely use the same `VIRTUAL_HOST` setup without conflict.  And because dory uses [dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy) under the hood, you will be as compatible as possible.
+No. Well, maybe sort of, but not really.  [Dinghy](https://github.com/codekitchen/dinghy)
+has a lot of responsibilities on OS X, most of which are not necessary on Linux since
+docker runs natively.  Something it does that can benefit linux users however, is the
+setup and management of an [nginx reverse HTTP proxy](https://www.nginx.com/resources/admin-guide/reverse-proxy/).
+Using full dinghy on Linux for local development doesn't really make sense to me,
+but using a reverse proxy does.  Furthermore, if you work with other devs who run
+Dinghy on OS X, you will have to massage your (docker-compose)[https://docs.docker.com/compose/]
+files to avoid conflicting.  By using  [dory](https://github.com/FreedomBen/dory),
+you can safely use the same `VIRTUAL_HOST` setup without conflict.  And because
+dory uses [dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy)
+under the hood, you will be as compatible as possible.
 
 ## Are there any reasons to run full dinghy on Linux?
 
-Generally speaking, IMHO, no.  The native experience is superior.  However, for some reason maybe you'd prefer to not have docker on your local machine?  Maybe you'd rather run it in a VM?  If that describes you, then maybe you want full dinghy.
+Generally speaking, IMHO, no.  The native experience is superior.  However, for
+some reason maybe you'd prefer to not have docker on your local machine?
+Maybe you'd rather run it in a VM?  If that describes you, then maybe you want full dinghy.
 
-I am intrigued at the possibilities of using dinghy on Linux to drive a cloud-based docker engine.  For that, stay tuned.
+I am intrigued at the possibilities of using dinghy on Linux to drive a
+cloud-based docker engine.  For that, stay tuned.
 
 ## Why didn't you just fork dinghy?
 
-That was actually my first approach, and I considered it quite a bit.  As I went through the process in my head tho, and reviewed the dinghy source code, I decided that it was just too heavy to really fit the need I had.  I love being able to run docker natively, and I revere [the Arch Way](https://wiki.archlinux.org/index.php/The_Arch_Way).  Dinghy just seemed like too big of a hammer for this problem (the problem being that I work on Linux, but my colleagues use OS X/Dinghy for docker development).
+That was actually my first approach, and I considered it quite a bit.  As I
+went through the process in my head tho, and reviewed the dinghy source code,
+I decided that it was just too heavy to really fit the need I had.  I love being
+able to run docker natively, and I revere
+[the Arch Way](https://wiki.archlinux.org/index.php/The_Arch_Way).  Dinghy just
+seemed like too big of a hammer for this problem (the problem being that I work
+on Linux, but my colleagues use OS X/Dinghy for docker development).
 
 ## What if I'm developing on a cloud server?
 
-You do this too!?  Well fine hacker, it's your lucky day because dory has you covered.  You can run the nginx proxy on the cloud server and the dnsmasq/resolver locally.  Here's how:
+You do this too!?  Well fine hacker, it's your lucky day because dory has you
+covered.  You can run the nginx proxy on the cloud server and the dnsmasq/resolver
+locally.  Here's how:
 
 * Install dory on both client and server:
 ```
@@ -120,4 +162,6 @@ dory config-file
 
 * [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy) (Indirectly but worthy of mention)
 * [codekitchen/dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy)
+* [andyshinn/dnsmasq](https://hub.docker.com/r/andyshinn/dnsmasq/)
+* [freedomben/dory-dnsmasq](https://github.com/FreedomBen/dory-dnsmasq)
 * [erikhuda/thor](https://github.com/erikhuda/thor)
