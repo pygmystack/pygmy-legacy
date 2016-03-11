@@ -69,7 +69,7 @@ module Dory
     def self.write_to_file(contents)
       # have to use this hack cuz we don't run as root :-(
       puts "Requesting sudo to write to #{self.resolv_file}".green
-      Bash.run_command("echo -e '#{contents}' | sudo tee #{self.resolv_file} >/dev/null")
+      Bash.run_command("echo -e '#{contents}' | sudo tee #{Shellwords.escape(self.resolv_file)} >/dev/null")
     end
 
     def self.resolv_file_contents

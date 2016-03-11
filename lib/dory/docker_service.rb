@@ -3,7 +3,7 @@ module Dory
     def start
       unless self.running?
         success = if self.container_exists?
-                    Sh.run_command("docker start #{self.container_name}")
+                    Sh.run_command("docker start #{Shellwords.escape(self.container_name)}")
                   else
                     Sh.run_command(self.run_cmd).success?
                   end
@@ -39,14 +39,14 @@ module Dory
     end
 
     def stop(container_name = self.container_name)
-      Sh.run_command("docker kill #{container_name}") if self.running?
+      Sh.run_command("docker kill #{Shellwords.escape(container_name)}") if self.running?
       !self.running?
     end
 
     def delete(container_name = self.container_name)
       if self.container_exists?
         self.stop if self.running?
-        Sh.run_command("docker rm #{container_name}")
+        Sh.run_command("docker rm #{Shellwords.escape(container_name)}")
       end
       !self.container_exists?
     end

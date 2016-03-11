@@ -14,8 +14,9 @@ module Dory
 
     def self.run_cmd
       "docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock -e " \
-      "'CONTAINER_NAME=#{self.container_name}' --name " \
-      "'#{self.container_name}' #{dinghy_http_proxy_image_name}"
+        "'CONTAINER_NAME=#{Shellwords.escape(self.container_name)}' --name " \
+        "'#{Shellwords.escape(self.container_name)}' " \
+        "#{Shellwords.escape(dinghy_http_proxy_image_name)}"
     end
   end
 end
