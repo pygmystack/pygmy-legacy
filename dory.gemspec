@@ -6,7 +6,7 @@ require 'dory/version'
 Gem::Specification.new do |s|
   s.name        = 'dory'
   s.version     = Dory::VERSION
-  s.date        = '2016-03-08'
+  s.date        = '2016-03-11'
   s.summary     = 'slackbot_frd provides a dirt-simple framework ' \
     'for implementing one or more slack bots'
   s.description = 'The slack web api is good, but very raw.  ' \
