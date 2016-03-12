@@ -1,5 +1,7 @@
 # dory
 
+[![Build Status](https://travis-ci.org/FreedomBen/dory.svg?branch=master)](https://travis-ci.org/FreedomBen/dory)
+
 [Dory](https://github.com/FreedomBen/dory) let's you forget about IP addresses and port numbers
 while you are developing you application.  Through the magic of local DNS services and nginx
 reverse proxy, you can access your app at http://<whatever-you-want>.<whatever-else>.

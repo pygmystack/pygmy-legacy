@@ -9,7 +9,7 @@ module Dory
                   end
         unless success
           raise RuntimeError.new(
-            "Failed to run nginx proxy.  Command #{self.run_cmd} failed"
+            "Failed to run #{self.container_name}.  Command #{self.run_cmd} failed"
           )
         end
       end
