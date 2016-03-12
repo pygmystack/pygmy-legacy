@@ -4,7 +4,8 @@
 
 [Dory](https://github.com/FreedomBen/dory) let's you forget about IP addresses and port numbers
 while you are developing you application.  Through the magic of local DNS services and nginx
-reverse proxy, you can access your app at http://<whatever-you-want>.<whatever-else>.
+reverse proxy, you can access your app at the domain of your choosing.  For example,
+http://myapp.docker or http://this-is-a-really-long-name.but-its-cool-cause-i-like-it
 
 Dory wraps [codekitchen/dinghy-http-proxy](https://github.com/codekitchen/dinghy-http-proxy)
 and makes it easily available for use on Linux.  This way you can work comfortably
