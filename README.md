@@ -73,7 +73,7 @@ Default config file which should be placed at `~/.dory.yml` (can be generated wi
     :nameserver: 127.0.0.1
 ```
 
-## Making your containers accessible through name (DNS)
+## Making your containers accessible by name (DNS)
 
 To make your container(s) accessible through a domain, all you have to do is set
 a `VIRTUAL_HOST` environment variable in your container.  That's it!  (Well, and you have
