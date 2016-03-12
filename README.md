@@ -30,7 +30,6 @@ gem install dory
 Dory has a small selection of commands that are hopefully intuitive.
 To customize and fine-tune dory's behavior, it can be configured with a yaml config file.
 
-
 ### Commands
 ```
 Commands:
@@ -72,6 +71,46 @@ Default config file which should be placed at `~/.dory.yml` (can be generated wi
   :resolv:
     :enabled: true
     :nameserver: 127.0.0.1
+```
+
+## Making your containers accessible through name (DNS)
+
+To make your container(s) accessible through a domain, all you have to do is set
+a `VIRTUAL_HOST` environment variable in your container.  That's it!  (Well, and you have
+to have dory running with the correct domain set in `~/.dory.yml`).
+You can also set `VIRTUAL_PORT` to set the port to something other than 80.
+
+Many people do this in their `docker-compose.yml` file:
+
+```yaml
+version: '2'
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+      - redis
+    environment:
+      - VIRTUAL_HOST=myapp.docker
+  redis:
+    image: redis
+    environment:
+      - VIRTUAL_HOST=redis.docker
+      - VIRTUAL_PORT=6379
+  db:
+    image: postgres
+    environment:
+      - VIRTUAL_HOST=postgres.docker
+      - VIRTUAL_PORT=5432
+```
+
+In the example above, you can hit the web container from the host machine with `http://myapp.docker`,
+and the redis container with `tcp://redis.docker`.  This does *not* affect any links on the internal docker network.
+
+You could also just run a docker container with the environment variable like this:
+
+```
+docker run -e VIRTUAL_HOST=myapp.docker  ...
 ```
 
 ## Troubleshooting
