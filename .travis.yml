@@ -2,7 +2,7 @@ language: ruby
 rvm:
   - "2.1.8"
   - "2.2.3"
-  - rbx
+  #- rbx
 sudo: required
 dist: trusty
 install: ./travis/install-dependencies.sh
