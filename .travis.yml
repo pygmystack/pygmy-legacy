@@ -16,3 +16,6 @@ dist: trusty
 install: ./travis/install-dependencies.sh
 before_script: ./travis/clear-port-53.sh
 script: bundle exec rspec spec
+addons:
+  code_climate:
+    repo_token: 46a3c49e96d5c0bdb250985bb75c501e68b97bf343d7940a3b629c82ce874cbc
