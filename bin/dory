@@ -17,16 +17,8 @@ class DoryBin < Thor
     for your custom domain to the nginx proxy.  The local resolver
     will also be configured to use the dnsmasq instance as a nameserver
 
-    You can optionally pass in [-s|--server] or [-c|--client] if doing
-    development on a cloud server.  This will tell dory to only bring
-    up the nginx proxy container if passed --server or only the
-    dnsmasq/resolv if passed --client.  If both server and client
-    are passed, it is equivalent to a naked 'up'
-
-    > $ dory up [-s|--server] [-c|--client]
+    > $ dory up
   LONGDESC
-  option :client, type: :boolean, aliases: 'c', default: false
-  option :server, type: :boolean, aliases: 's', default: false
   def up
     exec_up(options)
   end
@@ -52,10 +44,8 @@ class DoryBin < Thor
   long_desc <<-LONGDESC
     Stop and restart dory services (nginx-proxy, dnsmasq, resolv)
 
-    > $ dory restart [-d|--destroy] [-s|--server] [-c|--client]
+    > $ dory restart [-d|--destroy]
   LONGDESC
-  option :client, type: :boolean, aliases: 'c', default: false
-  option :server, type: :boolean, aliases: 's', default: false
   option :destroy, type: :boolean, aliases: 'd', default: true
   def restart
     exec_down(options)
@@ -85,7 +75,7 @@ class DoryBin < Thor
 
   private
 
-  def exec_config_file(options)
+  def exec_config_file(_options)
     if File.exist?(Dory::Config.filename)
       print "A config file already exists at #{Dory::Config.filename}.  Overwrite with default settings? (Y/N): ".yellow
       conf = STDIN.gets.chomp
@@ -99,9 +89,6 @@ class DoryBin < Thor
   end
 
   def exec_up(options)
-    full = (!options[:server] && !options[:client]) ||
-           ( options[:server] &&  options[:client])
-
     puts "Reading settings file at '#{Dory::Config.filename}'".green if options[:verbose]
     settings = Dory::Config.settings
     if settings[:dory][:nginx_proxy][:enabled]
@@ -138,7 +125,7 @@ class DoryBin < Thor
     end
   end
 
-  def exec_status(options)
+  def exec_status(_options)
     settings = Dory::Config.settings
 
     if Dory::Proxy.running?
@@ -167,8 +154,6 @@ class DoryBin < Thor
   end
 
   def exec_down(options)
-    destroy = options[:destroy]
-    
     if Dory::Resolv.clean
       puts "nameserver removed from resolv file".green
     else

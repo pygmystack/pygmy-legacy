@@ -1,8 +1,3 @@
-begin
-  require 'byebug'
-rescue LoadError
-end
-
 require 'rspec'
 
 RSpec.describe Dory::Resolv do

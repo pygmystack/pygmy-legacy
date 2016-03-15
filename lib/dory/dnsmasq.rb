@@ -23,7 +23,7 @@ module Dory
     def self.run_cmd(domain = self.domain, addr = self.addr)
       "docker run -d -p 53:53/tcp -p 53:53/udp --name=#{Shellwords.escape(self.container_name)} " \
       "--cap-add=NET_ADMIN #{Shellwords.escape(self.dnsmasq_image_name)} " \
-      "#{Shellwords.escape(self.domain)} #{Shellwords.escape(self.addr)}"
+      "#{Shellwords.escape(domain)} #{Shellwords.escape(addr)}"
     end
   end
 end
