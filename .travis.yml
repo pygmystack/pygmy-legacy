@@ -3,7 +3,14 @@ rvm:
   - "2.1.8"
   - "2.2.4"
   - "2.3.0"
-  #- rbx
+  - rbx-2
+  - rbx-3
+  - jruby-9.0.0.0
+  - jruby-9.0.1.0
+  - jruby-9.0.4.0
+  - jruby-9.0.5.0
+  - jruby-head
+  - mruby-head
 sudo: required
 dist: trusty
 install: ./travis/install-dependencies.sh
