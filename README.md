@@ -1,6 +1,6 @@
 # dory
 
-[![Gem Version](https://badge.fury.io/rb/dory.svg)](https://badge.fury.io/rb/dory) [![Build Status](https://travis-ci.org/FreedomBen/dory.svg?branch=master)](https://travis-ci.org/FreedomBen/dory) [![Code Climate](https://codeclimate.com/repos/56e7544adbc14a0071006e5c/badges/ced6de7826db3d3ad826/gpa.svg)](https://codeclimate.com/repos/56e7544adbc14a0071006e5c/feed)
+[![Gem Version](https://badge.fury.io/rb/dory.svg)](https://badge.fury.io/rb/dory) [![Build Status](https://travis-ci.org/FreedomBen/dory.svg?branch=master)](https://travis-ci.org/FreedomBen/dory) [![Code Climate](https://codeclimate.com/github/FreedomBen/dory/badges/gpa.svg)](https://codeclimate.com/github/FreedomBen/dory)
 
 [Dory](https://github.com/FreedomBen/dory) let's you forget about IP addresses and port numbers
 while you are developing you application.  Through the magic of local DNS services and nginx
