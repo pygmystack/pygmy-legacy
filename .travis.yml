@@ -18,4 +18,4 @@ before_script: ./travis/clear-port-53.sh
 script: bundle exec rspec spec
 addons:
   code_climate:
-    repo_token: 46a3c49e96d5c0bdb250985bb75c501e68b97bf343d7940a3b629c82ce874cbc
+    repo_token: d8cb42815dd1076748cb239c298cd700d96c5a1b4aefa7ae340c6701050b6432
