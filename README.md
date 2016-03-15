@@ -1,6 +1,6 @@
 # dory
 
-[![Build Status](https://travis-ci.org/FreedomBen/dory.svg?branch=master)](https://travis-ci.org/FreedomBen/dory)
+[![Gem Version](https://badge.fury.io/rb/dory.svg)](https://badge.fury.io/rb/dory) [![Build Status](https://travis-ci.org/FreedomBen/dory.svg?branch=master)](https://travis-ci.org/FreedomBen/dory)
 
 [Dory](https://github.com/FreedomBen/dory) let's you forget about IP addresses and port numbers
 while you are developing you application.  Through the magic of local DNS services and nginx
