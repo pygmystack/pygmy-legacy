@@ -1,3 +1,5 @@
+require 'shellwords'
+
 module Dory
   module DockerService
     def start
