@@ -25,6 +25,7 @@ module Dory
           :nginx_proxy:
             :enabled: true
             :container_name: dory_dinghy_http_proxy
+            :ssl_certs_dir: ''  # leave as empty string to disable
           :resolv:
             :enabled: true
             :nameserver: 127.0.0.1
