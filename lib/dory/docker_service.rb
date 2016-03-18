@@ -5,8 +5,16 @@ module Dory
     def start
       unless self.running?
         success = if self.container_exists?
-                    Sh.run_command("docker start #{Shellwords.escape(self.container_name)}")
+                    if Dory::Config.debug?
+                      puts "[DEBUG] Container '#{self.container_name}' already exists.  " \
+                           "Starting with '#{self.start_cmd}'"
+                    end
+                    Sh.run_command(self.start_cmd).success?
                   else
+                    if Dory::Config.debug?
+                      puts "[DEBUG] Container '#{self.container_name}' does not exist.  " \
+                           "Creating/starting with '#{self.run_cmd}'"
+                    end
                     Sh.run_command(self.run_cmd).success?
                   end
         unless success
@@ -51,6 +59,10 @@ module Dory
         Sh.run_command("docker rm #{Shellwords.escape(container_name)}")
       end
       !self.container_exists?
+    end
+
+    def start_cmd
+      "docker start #{Shellwords.escape(self.container_name)}"
     end
   end
 end

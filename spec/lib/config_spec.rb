@@ -76,4 +76,19 @@ RSpec.describe Dory::Config do
     expect(settings[:dory][:nginx_proxy][:ssl_certs_dir]).to eq(ssl_certs_dir)
     expect(settings[:dory][:nginx_proxy][:container_name]).to eq(overridden_proxy_container_name)
   end
+
+  context "debug mode" do
+    it "can be put in debug mode" do
+      Dory::Config.write_default_settings_file
+      new_config = YAML.load(default_config)
+      new_config[:dory][:debug] = true
+      Dory::Config.write_settings(new_config, filename, is_yaml: false)
+      expect(File.exist?(filename)).to be_truthy
+      expect(Dory::Config.debug?).to be_truthy
+    end
+
+    it "defaults to non-debug mode" do
+      expect(Dory::Config.debug?).to be_falsey
+    end
+  end
 end

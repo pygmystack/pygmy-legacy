@@ -43,6 +43,7 @@ module Dory
         [:dnsmasq, :nginx_proxy, :resolv].each do |service|
           default_settings[:dory][service].merge!(config_file_settings[:dory][service] || {})
         end
+        default_settings[:dory][:debug] = config_file_settings[:dory][:debug]
         default_settings
       else
         self.default_settings
@@ -56,6 +57,10 @@ module Dory
 
     def self.write_default_settings_file(filename = self.filename)
       self.write_settings(self.default_yaml, filename, is_yaml: true)
+    end
+
+    def self.debug?
+      self.settings[:dory][:debug]
     end
   end
 end
