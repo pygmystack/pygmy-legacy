@@ -38,18 +38,24 @@ module Dory
 
     def self.settings(filename = self.filename)
       if File.exist?(filename)
-        self.default_settings.merge(YAML.load_file(filename))
+        default_settings = self.default_settings.dup
+        config_file_settings = YAML.load_file(filename)
+        [:dnsmasq, :nginx_proxy, :resolv].each do |service|
+          default_settings[:dory][service].merge!(config_file_settings[:dory][service] || {})
+        end
+        default_settings
       else
         self.default_settings
       end
     end
 
-    def self.write_settings(settings, filename = self.filename)
+    def self.write_settings(settings, filename = self.filename, is_yaml: false)
+      settings = settings.to_yaml unless is_yaml
       File.write(filename, settings)
     end
 
     def self.write_default_settings_file(filename = self.filename)
-      self.write_settings(self.default_yaml, filename)
+      self.write_settings(self.default_yaml, filename, is_yaml: true)
     end
   end
 end
