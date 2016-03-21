@@ -18,7 +18,8 @@ module Dory
     def self.certs_arg
       certs_dir = Dory::Config.settings[:dory][:nginx_proxy][:ssl_certs_dir]
       if certs_dir && !certs_dir.empty?
-        "-p 443:443 -v #{certs_dir}:/etc/nginx/certs"
+        #"-p 443:443 -v #{certs_dir}:/etc/nginx/certs"
+        "-v #{certs_dir}:/etc/nginx/certs"
       else
         ''
       end
