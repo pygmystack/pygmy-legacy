@@ -4,8 +4,11 @@ module Dory
   class Proxy
     extend Dory::DockerService
 
-    def self.dinghy_http_proxy_image_name
-      'codekitchen/dinghy-http-proxy:2.0.3'
+    def self.dory_http_proxy_image_name
+      setting = Dory::Config.settings[:dory][:nginx_proxy][:image]
+      return 'freedomben/dory-http-proxy:2.0.4.1' if setting == 'freedomben'
+      return setting if setting
+      'codekitchen/dinghy-http-proxy:2.0.4'
     end
 
     def self.container_name
