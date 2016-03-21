@@ -188,8 +188,13 @@ class DoryBin < Thor
   end
 end
 
+aliases = {
+  'start' => 'up',
+  'stop'  => 'down',
+}
+
 if !ARGV.empty? && %w[-v --version].include?(ARGV.first)
   puts "Dory - Version: #{Dory::VERSION}"
 else
-  DoryBin.start(ARGV)
+  DoryBin.start(ARGV.map { |a| aliases.keys.include?(a) ? aliases[a] : a })
 end
