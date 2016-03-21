@@ -25,7 +25,8 @@ module Dory
           :nginx_proxy:
             :enabled: true
             :container_name: dory_dinghy_http_proxy
-            :ssl_certs_dir: ''  # leave as empty string to disable
+            :https_enabled: true
+            :ssl_certs_dir: ''  # leave as empty string to use default certs
           :resolv:
             :enabled: true
             :nameserver: 127.0.0.1
