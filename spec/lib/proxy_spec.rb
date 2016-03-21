@@ -83,13 +83,13 @@ RSpec.describe Dory::Proxy do
 
     context "enabled" do
       it "enables" do
-        patch_ssl_enabled(true)
+        patch_ssl_enabled.call(true)
         expect_port.call(in_cmd: true)
         expect_proxy_to_start.call()
       end
 
       it "disables" do
-        patch_ssl_enabled(false)
+        patch_ssl_enabled.call(false)
         expect_port.call(in_cmd: false)
         expect_proxy_to_start.call()
       end
@@ -124,13 +124,11 @@ RSpec.describe Dory::Proxy do
 
       it "does not mount anything when ssl certs is empty string" do
         expect_not_in_cmd.call('')
-        expect_port.call(in_cmd: false)
         expect_proxy_to_start.call()
       end
 
       it "does not mount anything when ssl certs is nil" do
         expect_not_in_cmd.call(nil)
-        expect_port.call(in_cmd: false)
         expect_proxy_to_start.call()
       end
     end
