@@ -7,7 +7,7 @@ module Dory
     def self.dory_http_proxy_image_name
       setting = Dory::Config.settings[:dory][:nginx_proxy][:image]
       return setting if setting
-      'freedomben/dory-http-proxy:2.0.4.2'
+      'freedomben/dory-http-proxy:2.2.0.1'
     end
 
     def self.container_name
