@@ -1,4 +1,6 @@
 require 'colorize'
+require 'tempfile'
+require 'pathname'
 
 module Pygmy
   module Resolv
@@ -13,7 +15,7 @@ module Pygmy
     end
 
     def self.file_comment
-      '# added by pygmy'
+      '# added by amazee.io pygmy'
     end
 
     def self.nameserver
@@ -30,7 +32,7 @@ module Pygmy
 
     def self.resolv_file
       if Linux.ubuntu?
-        return self.ubuntu_resolv_file if Linux.ubuntu?
+        return self.ubuntu_resolv_file
       elsif Linux.fedora? || Linux.arch? || File.exist?(self.common_resolv_file)
         return self.common_resolv_file
       else
@@ -40,7 +42,11 @@ module Pygmy
       end
     end
 
+
     def self.configure
+      if Linux.osx?
+        return ResolvOsx.create_resolver?
+      end
       # we want to be the first nameserver in the list for performance reasons
       # we only want to add the nameserver if it isn't already there
       prev_conts = self.resolv_file_contents
@@ -57,6 +63,9 @@ module Pygmy
     end
 
     def self.clean
+      if Linux.osx?
+        return ResolvOsx.clean?
+      end
       prev_conts = self.resolv_file_contents
       if self.contents_has_our_nameserver?(prev_conts)
         prev_conts.gsub!(/#{Regexp.escape(self.nameserver_contents + "\n")}/, '')
@@ -77,6 +86,9 @@ module Pygmy
     end
 
     def self.has_our_nameserver?
+      if Linux.osx?
+        return ResolvOsx.resolver_file_exists?
+      end
       self.contents_has_our_nameserver?(self.resolv_file_contents)
     end
 

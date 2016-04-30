@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
     'interacting with other services which are authenticated via ssh and more.' \
     'Pygmy makes usre that the required Docker containers are started and that you' \
     'comfortably can access the Drupal Containers just via the browser.'
-  s.authors     = ['Ben Porter']
-  s.email       = 'BenjaminPorter86@gmail.com'
+  s.authors     = ['Michael Schmid']
+  s.email       = 'michael@amazee.io'
   s.files       = ['lib/pygmy.rb'] + Dir['lib/pygmy/**/*']
   s.homepage    = 'https://github.com/amazeeio/pygmy'
   s.license     = 'MIT'

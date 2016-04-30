@@ -23,10 +23,10 @@ module Pygmy
     end
 
     def container_exists?(container_name = self.container_name)
-      !!(self.ps(all: true) =~ /#{container_name}/)
+      !!(self.ps(true) =~ /#{container_name}/)
     end
 
-    def ps(all: false)
+    def ps(all = false)
       cmd = "docker ps#{all ? ' -a' : ''}"
       ret = Sh.run_command(cmd)
       if ret.success?
@@ -41,7 +41,7 @@ module Pygmy
     end
 
     def stop(container_name = self.container_name)
-      Sh.run_command("docker kill #{Shellwords.escape(container_name)}") if self.running?
+      Sh.run_command("docker stop -t 1 #{Shellwords.escape(container_name)}") if self.running?
       !self.running?
     end
 

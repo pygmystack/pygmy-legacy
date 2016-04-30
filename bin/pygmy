@@ -30,16 +30,26 @@ class PygmyBin < Thor
     exec_up(options)
   end
 
-  desc 'down', 'Stop all pygmy services'
+  desc 'stop', 'Stop all pygmy services'
   long_desc <<-LONGDESC
     Stops all pygmy services.  Can optionally pass [-d|--destroy]
     to destroy the containers when they stop.
 
-    > $ pygmy down [-d|--destroy]
+    > $ pygmy stop [-d|--destroy]
   LONGDESC
-  option :destroy, type: :boolean, aliases: 'd', default: false
+  option :destroy, type: :boolean, aliases: '-d', default: false
+  def stop
+    exec_stop(options)
+  end
+
+  desc 'down', 'Stop and destroy all pygmy services'
+  long_desc <<-LONGDESC
+    Stops all pygmy services and destroy the containers when they stop.
+
+    > $ pygmy down
+  LONGDESC
   def down
-    exec_down(options)
+    exec_stop({:destroy => true})
   end
 
   desc 'addkey [~/.ssh/id_rsa]', 'Add additional ssh-key'
@@ -50,7 +60,7 @@ class PygmyBin < Thor
 
     > $ pygmy addkey [~/.ssh/other_key]
   LONGDESC
-  def addkey(key = "$HOME/.ssh/id_rsa")
+  def addkey(key = "#{Dir.home}/.ssh/id_rsa")
     add_ssh_key(key)
   end
 
@@ -61,13 +71,13 @@ class PygmyBin < Thor
 
   desc 'restart', 'Stop and restart all pygmy services'
   long_desc <<-LONGDESC
-    Stop and restart pygmy services (dnsmasq, resolv)
+    Stop and restart pygmy services (dnsmasq, resolv, haproxy, ssh-agent)
 
     > $ pygmy restart [-d|--destroy]
   LONGDESC
-  option :destroy, type: :boolean, aliases: 'd', default: false
+  option :destroy, type: :boolean, aliases: '-d', default: false
   def restart
-    exec_down(options)
+    exec_stop(options)
     exec_up(options)
   end
 
@@ -105,16 +115,16 @@ class PygmyBin < Thor
       puts "Error starting ssh-agent".red
     end
 
-    if Pygmy::SshAgentAddKey.add_ssh_key
-      puts "Successfully injected ssh key".green
-    else
-      puts "Error injected ssh key".red
-    end
-
     if Pygmy::Resolv.configure
       puts "Successfully configured local resolver".green
     else
       puts "Error configuring local resolver".red
+    end
+
+    if Pygmy::SshAgentAddKey.add_ssh_key
+      puts "Successfully injected ssh key".green
+    else
+      puts "Error injected ssh key".red
     end
   end
 
@@ -126,23 +136,25 @@ class PygmyBin < Thor
       puts "[*] Dnsmasq is not running".red
     end
 
+    if Pygmy::Haproxy.running?
+      puts "[*] Haproxy: Running as docker container #{Pygmy::Haproxy.container_name}".green
+    else
+      puts "[*] Haproxy is not running".red
+    end
+
+    if Pygmy::Resolv.has_our_nameserver?
+      puts "[*] Resolv is properly configured".green
+    else
+      puts "[*] Resolv is not configured".red
+    end
+
     if Pygmy::SshAgent.running?
-      puts "[*] ssh-agent: Running as docker container #{Pygmy::Haproxy.container_name}".green
+      puts "[*] ssh-agent: Running as docker container #{Pygmy::SshAgent.container_name}, loaded keys:".green
+      Pygmy::SshAgentAddKey.show_ssh_keys
     else
       puts "[*] ssh-agent is not running".red
     end
 
-    if Pygmy::Dnsmasq.running?
-      puts "[*] Dnsmasq: Running as docker container #{Pygmy::Dnsmasq.container_name}".green
-    else
-      puts "[*] Dnsmasq is not running".red
-    end
-
-    if Pygmy::Resolv.has_our_nameserver?
-      puts "[*] Resolv: configured with #{Pygmy::Resolv.file_nameserver_line}".green
-    else
-      puts "[*] Resolv is not configured".red
-    end
   end
 
 
@@ -160,11 +172,11 @@ class PygmyBin < Thor
 
   end
 
-  def exec_down(options)
+  def exec_stop(options)
     if Pygmy::Resolv.clean
-      puts "nameserver removed from resolv file".green
+      puts "Resolver removed".green
     else
-      puts "Unable to remove nameserver from resolv file".red
+      puts "Unable to remove resolver".red
     end
 
     if Pygmy::Dnsmasq.stop
@@ -211,7 +223,6 @@ end
 
 aliases = {
   'start' => 'up',
-  'stop'  => 'down',
 }
 
 if !ARGV.empty? && %w[-v --version].include?(ARGV.first)

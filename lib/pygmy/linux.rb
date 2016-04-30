@@ -1,4 +1,4 @@
-module Dory
+module Pygmy
   module Linux
     def self.bash(command)
       system("bash -c '#{command}'")
