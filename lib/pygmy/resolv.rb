@@ -1,6 +1,6 @@
 require 'colorize'
 
-module Dory
+module Pygmy
   module Resolv
     def self.common_resolv_file
       '/etc/resolv.conf'
@@ -13,11 +13,11 @@ module Dory
     end
 
     def self.file_comment
-      '# added by dory'
+      '# added by pygmy'
     end
 
     def self.nameserver
-      Dory::Config.settings[:dory][:resolv][:nameserver]
+      "127.0.0.1"
     end
 
     def self.file_nameserver_line

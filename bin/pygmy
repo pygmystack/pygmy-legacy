@@ -1,0 +1,221 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'yaml'
+
+require 'pygmy'
+
+class PygmyBin < Thor
+  class_option :verbose, type: :boolean, aliases: '-v', default: false
+
+  desc 'up', 'Bring up pygmy services (dnsmasq, resolv, ssh-agent)'
+  long_desc <<-LONGDESC
+    Bring up pygmy services (dnsmasq, haproxy, resolv, ssh-agent)
+
+    When run, there will be two docker containers started:
+
+    - dnsmasq: to resolve DNS requests for your the domain *.docker.amazee.io
+
+    - haproxy: to forward HTTP and HTTPs requests to the docker containers running Drupal.
+
+    - ssh-agent: to keep the ssh-agent at one single place, so that all other docker containers
+      can consume the ssh key.
+
+    Additionally the local resolver (/etc/resolv.conf) will be configured to use the dnsmasq
+    instance as a nameserver
+
+    > $ pygmy up
+  LONGDESC
+  def up
+    exec_up(options)
+  end
+
+  desc 'down', 'Stop all pygmy services'
+  long_desc <<-LONGDESC
+    Stops all pygmy services.  Can optionally pass [-d|--destroy]
+    to destroy the containers when they stop.
+
+    > $ pygmy down [-d|--destroy]
+  LONGDESC
+  option :destroy, type: :boolean, aliases: 'd', default: false
+  def down
+    exec_down(options)
+  end
+
+  desc 'addkey [~/.ssh/id_rsa]', 'Add additional ssh-key'
+  long_desc <<-LONGDESC
+    Adds an additional ssh key to the ssh-agent.
+    Needs the absolute path to key as an argument
+    or uses ~/.ssh/id_rsa if none provided
+
+    > $ pygmy addkey [~/.ssh/other_key]
+  LONGDESC
+  def addkey(key = "$HOME/.ssh/id_rsa")
+    add_ssh_key(key)
+  end
+
+  desc 'version', 'Check current installed version of pygmy'
+  def version
+    puts "Pygmy - Version: #{Pygmy::VERSION}"
+  end
+
+  desc 'restart', 'Stop and restart all pygmy services'
+  long_desc <<-LONGDESC
+    Stop and restart pygmy services (dnsmasq, resolv)
+
+    > $ pygmy restart [-d|--destroy]
+  LONGDESC
+  option :destroy, type: :boolean, aliases: 'd', default: false
+  def restart
+    exec_down(options)
+    exec_up(options)
+  end
+
+  desc 'status', 'Report status of the pygmy services'
+  long_desc <<-LONGDESC
+    Checks the current status of the services managed by pygmy.
+    This includes dnsmasq, and resolv
+
+    > $ pygmy status
+  LONGDESC
+  def status
+    exec_status(options)
+  end
+
+  private
+
+
+  def exec_up(options)
+
+    if Pygmy::Dnsmasq.start
+      puts "Successfully started dnsmasq".green
+    else
+      puts "Error starting dnsmasq".red
+    end
+
+    if Pygmy::Haproxy.start
+      puts "Successfully started haproxy".green
+    else
+      puts "Error starting haproxy".red
+    end
+
+    if Pygmy::SshAgent.start
+      puts "Successfully started ssh-agent".green
+    else
+      puts "Error starting ssh-agent".red
+    end
+
+    if Pygmy::SshAgentAddKey.add_ssh_key
+      puts "Successfully injected ssh key".green
+    else
+      puts "Error injected ssh key".red
+    end
+
+    if Pygmy::Resolv.configure
+      puts "Successfully configured local resolver".green
+    else
+      puts "Error configuring local resolver".red
+    end
+  end
+
+  def exec_status(_options)
+
+    if Pygmy::Dnsmasq.running?
+      puts "[*] Dnsmasq: Running as docker container #{Pygmy::Dnsmasq.container_name}".green
+    else
+      puts "[*] Dnsmasq is not running".red
+    end
+
+    if Pygmy::SshAgent.running?
+      puts "[*] ssh-agent: Running as docker container #{Pygmy::Haproxy.container_name}".green
+    else
+      puts "[*] ssh-agent is not running".red
+    end
+
+    if Pygmy::Dnsmasq.running?
+      puts "[*] Dnsmasq: Running as docker container #{Pygmy::Dnsmasq.container_name}".green
+    else
+      puts "[*] Dnsmasq is not running".red
+    end
+
+    if Pygmy::Resolv.has_our_nameserver?
+      puts "[*] Resolv: configured with #{Pygmy::Resolv.file_nameserver_line}".green
+    else
+      puts "[*] Resolv is not configured".red
+    end
+  end
+
+
+  def add_ssh_key(key)
+
+    if Pygmy::SshAgent.running?
+      if Pygmy::SshAgentAddKey.add_ssh_key(key)
+        puts "Successfully added ssh key".green
+      else
+        puts "Error added ssh key".red
+      end
+    else
+      puts "ssh-agent is not running, cannot add key".red
+    end
+
+  end
+
+  def exec_down(options)
+    if Pygmy::Resolv.clean
+      puts "nameserver removed from resolv file".green
+    else
+      puts "Unable to remove nameserver from resolv file".red
+    end
+
+    if Pygmy::Dnsmasq.stop
+      puts "Dnsmasq container stopped".green
+      if options[:destroy]
+        if Pygmy::Dnsmasq.delete
+          puts "Dnsmasq container successfully deleted".green
+        else
+          puts "Dnsmasq container failed to delete".red
+        end
+      end
+    else
+      puts "Dnsmasq container failed to stop".red
+    end
+
+    if Pygmy::SshAgent.stop
+      puts "ssh-agent container stopped".green
+      if options[:destroy]
+        if Pygmy::SshAgent.delete
+          puts "ssh-agent container successfully deleted".green
+        else
+          puts "ssh-agent container failed to delete".red
+        end
+      end
+    else
+      puts "ssh-agent container failed to stop".red
+    end
+
+    if Pygmy::Haproxy.stop
+      puts "Haproxy container stopped".green
+      if options[:destroy]
+        if Pygmy::Haproxy.delete
+          puts "Haproxy container successfully deleted".green
+        else
+          puts "Haproxy container failed to delete".red
+        end
+      end
+    else
+      puts "Haproxy container failed to stop".red
+    end
+
+  end
+end
+
+aliases = {
+  'start' => 'up',
+  'stop'  => 'down',
+}
+
+if !ARGV.empty? && %w[-v --version].include?(ARGV.first)
+  puts "Pygmy - Version: #{Pygmy::VERSION}"
+else
+  PygmyBin.start(ARGV.map { |a| aliases.keys.include?(a) ? aliases[a] : a })
+end

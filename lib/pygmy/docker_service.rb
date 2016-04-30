@@ -1,20 +1,12 @@
 require 'shellwords'
 
-module Dory
+module Pygmy
   module DockerService
     def start
       unless self.running?
         success = if self.container_exists?
-                    if Dory::Config.debug?
-                      puts "[DEBUG] Container '#{self.container_name}' already exists.  " \
-                           "Starting with '#{self.start_cmd}'"
-                    end
                     Sh.run_command(self.start_cmd).success?
                   else
-                    if Dory::Config.debug?
-                      puts "[DEBUG] Container '#{self.container_name}' does not exist.  " \
-                           "Creating/starting with '#{self.run_cmd}'"
-                    end
                     Sh.run_command(self.run_cmd).success?
                   end
         unless success

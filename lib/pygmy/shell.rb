@@ -1,6 +1,6 @@
 require 'ostruct'
 
-module Dory
+module Pygmy
   module Sh
     def self.run_command(command)
       stdout = `#{command}`
