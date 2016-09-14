@@ -18,6 +18,16 @@ module Pygmy
       self.running?
     end
 
+    def pull
+      puts "Pulling Docker Image #{Shellwords.escape(self.image_name)}".yellow
+      success = Sh.run_command("docker pull #{Shellwords.escape(self.image_name)}").success?
+      unless success
+        raise RuntimeError.new(
+          "Failed to update #{self.container_name}.  Command #{self.pull_cmd} failed"
+        )
+      end
+    end
+
     def running?(container_name = self.container_name)
       !!(self.ps =~ /#{container_name}/)
     end

@@ -8,7 +8,7 @@ require 'pygmy'
 class PygmyBin < Thor
   class_option :verbose, type: :boolean, aliases: '-v', default: false
 
-  desc 'up', 'Bring up pygmy services (dnsmasq, resolv, ssh-agent)'
+  desc 'up', 'Bring up pygmy services (dnsmasq, haproxt, resolv, ssh-agent)'
   long_desc <<-LONGDESC
     Bring up pygmy services (dnsmasq, haproxy, resolv, ssh-agent)
 
@@ -21,13 +21,25 @@ class PygmyBin < Thor
     - ssh-agent: to keep the ssh-agent at one single place, so that all other docker containers
       can consume the ssh key.
 
-    Additionally the local resolver (/etc/resolv.conf) will be configured to use the dnsmasq
-    instance as a nameserver
+    On Linux: The local resolver (/etc/resolv.conf) will be configured to use the dnsmasq
+    instance as a nameserver.
+
+    On Mac: A resolver file (/etc/resolver/docker.amazee.io) will be created to use the dnsmasq
+    instance as a nameserver for all *.docker.amazee.io domains.
 
     > $ pygmy up
   LONGDESC
   def up
     exec_up(options)
+  end
+
+  desc 'update', 'Pulls Docker Images and recreates the Containers'
+  long_desc <<-LONGDESC
+    Runs 'docker pull' on the Docker images in order to get their newest versions.
+    After that restarts all containers with removing them, so that the new images are used.
+  LONGDESC
+  def update
+    exec_update
   end
 
   desc 'stop', 'Stop all pygmy services'
@@ -94,6 +106,13 @@ class PygmyBin < Thor
 
   private
 
+  def exec_update
+    Pygmy::Haproxy.pull
+    Pygmy::SshAgent.pull
+    puts "Done. Recreating containers...".yellow
+    exec_stop({:destroy => true})
+    exec_up({})
+  end
 
   def exec_up(options)
 

@@ -13,7 +13,7 @@ module Pygmy
     end
 
     def self.create_resolver?
-      puts "setting up DNS resolution, this may require sudo".green
+      puts "setting up DNS resolution and loopback alias IP, this may require sudo".green
       unless self.resolver_dir.directory?
         self.system!("creating #{self.resolver_dir}", "sudo", "mkdir", "-p", self.resolver_dir)
       end
@@ -23,11 +23,15 @@ module Pygmy
         self.system!("creating #{self.resolver_file}", "sudo", "cp", f.path, self.resolver_file)
         self.system!("creating #{self.resolver_file}", "sudo", "chmod", "644", self.resolver_file)
       end
+      self.system!("creating loopback IP alias 172.16.172.16", "sudo", "ifconfig", "lo0", "alias", "172.16.172.16")
       self.system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
     end
 
     def self.clean?
+      puts "Removing resolver file and loopback alias IP, this may require sudo".green
       self.system!("removing resolverfile", "sudo", "rm", "-f", self.resolver_file)
+      self.system!("removing loopback IP alias 172.16.172.16", "sudo", "ifconfig", "lo0", "-alias", "172.16.172.16")
+      system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
     end
 
     def self.system!(step, *args)
