@@ -168,6 +168,12 @@ class PygmyBin < Thor
       puts "[*] Haproxy is not running".red
     end
 
+    if Pygmy::Mailhog.running?
+      puts "[*] Mailhog: Running as docker container #{Pygmy::Mailhog.container_name}".green
+    else
+      puts "[*] Mailhog is not running".red
+    end
+
     if Pygmy::Resolv.has_our_nameserver?
       puts "[*] Resolv is properly configured".green
     else
