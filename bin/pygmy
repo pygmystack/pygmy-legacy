@@ -8,7 +8,7 @@ require 'pygmy'
 class PygmyBin < Thor
   class_option :verbose, type: :boolean, aliases: '-v', default: false
 
-  desc 'up', 'Bring up pygmy services (dnsmasq, haproxt, resolv, ssh-agent)'
+  desc 'up', 'Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)'
   long_desc <<-LONGDESC
     Bring up pygmy services (dnsmasq, haproxy, resolv, ssh-agent)
 
@@ -83,7 +83,7 @@ class PygmyBin < Thor
 
   desc 'restart', 'Stop and restart all pygmy services'
   long_desc <<-LONGDESC
-    Stop and restart pygmy services (dnsmasq, resolv, haproxy, ssh-agent)
+    Stop and restart pygmy services (dnsmasq, resolv, haproxy, mailhog, ssh-agent)
 
     > $ pygmy restart [-d|--destroy]
   LONGDESC
@@ -96,7 +96,7 @@ class PygmyBin < Thor
   desc 'status', 'Report status of the pygmy services'
   long_desc <<-LONGDESC
     Checks the current status of the services managed by pygmy.
-    This includes dnsmasq, and resolv
+    This includes dnsmasq, mailhog, and resolv
 
     > $ pygmy status
   LONGDESC
@@ -108,6 +108,7 @@ class PygmyBin < Thor
 
   def exec_update
     Pygmy::Haproxy.pull
+    Pygmy::Mailhog.pull
     Pygmy::SshAgent.pull
     puts "Done. Recreating containers...".yellow
     exec_stop({:destroy => true})
@@ -126,6 +127,12 @@ class PygmyBin < Thor
       puts "Successfully started haproxy".green
     else
       puts "Error starting haproxy".red
+    end
+
+    if Pygmy::Mailhog.start
+      puts "Successfully started mailhog".green
+    else
+      puts "Error starting mailhog".red
     end
 
     if Pygmy::SshAgent.start
@@ -209,6 +216,19 @@ class PygmyBin < Thor
       end
     else
       puts "Dnsmasq container failed to stop".red
+    end
+
+    if Pygmy::Mailhog.stop
+      puts "Mailhog container stopped".green
+      if options[:destroy]
+        if Pygmy::Mailhog.delete
+          puts "Mailhog container successfully deleted".green
+        else
+          puts "Mailhog container failed to delete".red
+        end
+      end
+    else
+      puts "Mailhog container failed to stop".red
     end
 
     if Pygmy::SshAgent.stop
