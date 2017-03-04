@@ -9,9 +9,7 @@ module Pygmy
     end
 
     def self.ubuntu_resolv_file
-      #'/etc/resolvconf/resolv.conf.d/base'
-      # For now, use the common_resolv_file
-      self.common_resolv_file
+      '/etc/resolvconf/resolv.conf.d/head'
     end
 
     def self.file_comment
@@ -58,6 +56,7 @@ module Pygmy
         end
         prev_conts.gsub!(/\s+$/, '')
         self.write_to_file(prev_conts)
+        self.update_resolv_conf()
       end
       self.has_our_nameserver?
     end
@@ -71,6 +70,7 @@ module Pygmy
         prev_conts.gsub!(/#{Regexp.escape(self.nameserver_contents + "\n")}/, '')
         prev_conts.gsub!(/\s+$/, '')
         self.write_to_file(prev_conts)
+        self.update_resolv_conf()
       end
       !self.has_our_nameserver?
     end
@@ -79,6 +79,14 @@ module Pygmy
       # have to use this hack cuz we don't run as root :-(
       puts "Requesting sudo to write to #{self.resolv_file}".green
       Bash.run_command("echo -e '#{contents}' | sudo tee #{Shellwords.escape(self.resolv_file)} >/dev/null")
+    end
+
+    def self.update_resolv_conf()
+      if Linux.ubuntu?
+        puts "Updating resolv.conf".green
+        Bash.run_command("sudo resolvconf -u >/dev/null")
+      end
+      # For now do nothing on other distributions...
     end
 
     def self.resolv_file_contents
