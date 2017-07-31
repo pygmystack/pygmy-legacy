@@ -34,7 +34,6 @@ module Pygmy
         self.system!("removing loopback IP alias 172.16.172.16", "sudo", "ifconfig", "lo0", "-alias", "172.16.172.16")
         system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
       rescue Exception => e
-        puts e.class
         puts e.message
       end
     end
