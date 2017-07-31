@@ -29,9 +29,14 @@ module Pygmy
 
     def self.clean?
       puts "Removing resolver file and loopback alias IP, this may require sudo".green
-      self.system!("removing resolverfile", "sudo", "rm", "-f", self.resolver_file)
-      self.system!("removing loopback IP alias 172.16.172.16", "sudo", "ifconfig", "lo0", "-alias", "172.16.172.16")
-      system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
+      begin
+        self.system!("removing resolverfile", "sudo", "rm", "-f", self.resolver_file)
+        self.system!("removing loopback IP alias 172.16.172.16", "sudo", "ifconfig", "lo0", "-alias", "172.16.172.16")
+        system!("restarting mDNSResponder", "sudo", "killall", "mDNSResponder")
+      rescue Exception => e
+        puts e.class
+        puts e.message
+      end
     end
 
     def self.system!(step, *args)
