@@ -24,7 +24,7 @@ module Pygmy
       unless self.exists?
         unless Sh.run_command(self.create_cmd).success?
           raise RuntimeError.new(
-            "Failed to create #{self.network_name}.  Command #{self.run_cmd} failed"
+            "Failed to create #{self.network_name}.  Command #{self.create_cmd} failed"
           )
         end
       end
@@ -35,7 +35,7 @@ module Pygmy
       unless self.haproxy_connected?
         unless Sh.run_command(self.connect_haproxy_cmd).success?
           raise RuntimeError.new(
-            "Failed to connect #{self.haproxy_name} to #{self.network_name}.  Command #{self.run_cmd} failed"
+            "Failed to connect #{self.haproxy_name} to #{self.network_name}.  Command #{self.connect_haproxy_cmd} failed"
           )
         end
       end
