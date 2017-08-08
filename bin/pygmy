@@ -129,6 +129,18 @@ class PygmyBin < Thor
       puts "Error starting haproxy".red
     end
 
+    if Pygmy::DockerNetwork.create
+      puts "Successfully created amazeeio network".green
+    else
+      puts "Error creating amazeeio network".red
+    end
+
+    if Pygmy::DockerNetwork.connect
+      puts "Successfully connected haproxy to amazeeio network".green
+    else
+      puts "Error connecting haproxy to amazeeio network".red
+    end
+
     if Pygmy::Mailhog.start
       puts "Successfully started mailhog".green
     else
@@ -166,6 +178,18 @@ class PygmyBin < Thor
       puts "[*] Haproxy: Running as docker container #{Pygmy::Haproxy.container_name}".green
     else
       puts "[*] Haproxy is not running".red
+    end
+
+    if Pygmy::DockerNetwork.exists?
+      puts "[*] Network: Exists as name #{Pygmy::DockerNetwork.network_name}".green
+    else
+      puts "[*] Network does not exist".red
+    end
+
+    if Pygmy::DockerNetwork.haproxy_connected?
+      puts "[*] Network: Haproxy #{Pygmy::DockerNetwork.haproxy_name} connected to #{Pygmy::DockerNetwork.network_name}".green
+    else
+      puts "[*] Haproxy is not connected to #{Pygmy::DockerNetwork.network_name}".red
     end
 
     if Pygmy::Mailhog.running?
