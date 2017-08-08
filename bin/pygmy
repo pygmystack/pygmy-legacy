@@ -208,7 +208,7 @@ class PygmyBin < Thor
     if Pygmy::Resolv.clean
       puts "Resolver removed".green
     else
-      puts "Unable to remove resolver".red
+      puts "Error while removing the resolver".red
     end
 
     if Pygmy::Dnsmasq.stop
