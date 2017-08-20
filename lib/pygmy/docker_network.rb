@@ -13,7 +13,11 @@ module Pygmy
     end
 
     def self.create_cmd
-      "docker network create #{self.network_name}"
+      "docker network create --subnet=10.99.99.0/24 --gateway=10.99.99.1 #{self.network_name}"
+    end
+
+    def self.delete_cmd
+      "docker network rm #{self.network_name}"
     end
 
     def self.connect_haproxy_cmd
@@ -29,6 +33,13 @@ module Pygmy
         end
       end
       self.exists?
+    end
+
+    def self.delete
+      if self.exists?
+        Sh.run_command(self.delete_cmd)
+      end
+      !self.exists?
     end
 
     def self.connect

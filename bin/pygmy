@@ -287,6 +287,14 @@ class PygmyBin < Thor
       puts "Haproxy container failed to stop".red
     end
 
+    if options[:destroy]
+      if Pygmy::DockerNetwork.delete
+        puts "amazeeio network successfully deleted".green
+      else
+        puts "amazeeio network failed to delete".red
+      end
+    end
+
   end
 end
 
