@@ -45,18 +45,18 @@ module Pygmy
 
     def self.configure
       if Linux.osx?
-        return ResolvOsx.create_resolver?
+	      return ResolvOsx.create_resolver?
       end
       # we want to be the first nameserver in the list for performance reasons
       # we only want to add the nameserver if it isn't already there
-      prev_conts = self.resolv_file_contents
+      # we need to remove comments from the file
+      prev_conts = self.rm_comments(self.resolv_file_contents)
       unless self.contents_has_our_nameserver?(prev_conts)
         if prev_conts =~ /nameserver/
           prev_conts.sub!(/nameserver/, "#{self.nameserver_contents}\nnameserver")
         else
           prev_conts = "#{prev_conts}\n#{self.nameserver_contents}"
         end
-        prev_conts.gsub!(/\s+$/, '')
         self.write_to_file(prev_conts)
       end
       self.has_our_nameserver?
@@ -93,7 +93,11 @@ module Pygmy
     end
 
     def self.contents_has_our_nameserver?(contents)
-     !!((contents =~ /#{self.file_comment}/) || (contents =~ /#{self.file_nameserver_line}/))
+      !!((contents =~ /#{self.file_comment}/) || (contents =~ /^[^#](.*#{self.file_nameserver_line}.*)+$/))
+    end
+
+    def self.rm_comments(contents)
+      contents.gsub!(/^#.*$/,'')
     end
   end
 end
