@@ -8,17 +8,34 @@ module Pygmy
       'amazeeio-ssh-agent-add-key'
     end
 
-    def self.add_ssh_key(key = "#{Dir.home}/.ssh/id_rsa")
-      if File.file?(key)
-        system("docker run --rm -it " \
-        "--volume=#{key}:/#{key} " \
-        "--volumes-from=amazeeio-ssh-agent " \
-        "--name=#{Shellwords.escape(self.container_name)} " \
-        "#{Shellwords.escape(self.image_name)} " \
-        "ssh-add #{key}")
+    def self.add_ssh_key(key = nil)
+      if key
+        if File.file?(key)
+          if system("docker run --rm -it " \
+          "--volume=#{key}:/#{key} " \
+          "--volumes-from=amazeeio-ssh-agent " \
+          "--name=#{Shellwords.escape(self.container_name)} " \
+          "#{Shellwords.escape(self.image_name)} " \
+          "ssh-add #{key}")
+            puts "Successfully added #{key}".green
+            return true
+          else
+            puts "Error adding #{key}".yellow
+            return false
+          end
+        else
+          puts "ssh key: #{key}, does not exist, ignoring...".yellow
+          return false
+        end
       else
-        puts "ssh key: #{key}, does not exist, ignoring...".yellow
-        return false
+        suggested_keys = ["id_dsa", "id_rsa", "id_rsa1", "id_ecdsa", "id_ed25519"]
+        success = true
+        Dir.glob("#{Dir.home}/.ssh/id_*").each do |f|
+          if suggested_keys.include?(File.basename f)
+            success = self.add_ssh_key(f) && success
+          end
+        end
+        return success
       end
     end
 

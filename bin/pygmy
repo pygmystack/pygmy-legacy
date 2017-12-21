@@ -64,15 +64,16 @@ class PygmyBin < Thor
     exec_stop({:destroy => true})
   end
 
-  desc 'addkey [~/.ssh/id_rsa]', 'Add additional ssh-key'
+  desc 'addkey [/full/path/to/key_file]', 'Add additional ssh-key'
   long_desc <<-LONGDESC
     Adds an additional ssh key to the ssh-agent.
-    Needs the absolute path to key as an argument
-    or uses ~/.ssh/id_rsa if none provided
+    Needs the absolute path to a key as an argument
+    or looks for common default keyfiles if no
+    argument is provided.
 
-    > $ pygmy addkey [~/.ssh/other_key]
+    > $ pygmy addkey [/full/path/to/key_file]
   LONGDESC
-  def addkey(key = "#{Dir.home}/.ssh/id_rsa")
+  def addkey(key = nil)
     add_ssh_key(key)
   end
 
@@ -148,9 +149,9 @@ class PygmyBin < Thor
     end
 
     if Pygmy::SshAgentAddKey.add_ssh_key
-      puts "Successfully injected ssh key".green
+      puts "Successfully injected ssh key(s)".green
     else
-      puts "Error injected ssh key".red
+      puts "Error injecting ssh key(s)".red
     end
   end
 
@@ -194,9 +195,9 @@ class PygmyBin < Thor
 
     if Pygmy::SshAgent.running?
       if Pygmy::SshAgentAddKey.add_ssh_key(key)
-        puts "Successfully added ssh key".green
+        puts "Successfully added ssh key(s)".green
       else
-        puts "Error added ssh key".red
+        puts "Error adding ssh key(s)".red
       end
     else
       puts "ssh-agent is not running, cannot add key".red
