@@ -17,7 +17,6 @@ module Pygmy
           "--name=#{Shellwords.escape(self.container_name)} " \
           "#{Shellwords.escape(self.image_name)} " \
           "ssh-add #{key}")
-            puts "Successfully added #{key}".green
             return true
           else
             puts "Error adding #{key}".yellow
@@ -29,13 +28,18 @@ module Pygmy
         end
       else
         suggested_keys = ["id_dsa", "id_rsa", "id_rsa1", "id_ecdsa", "id_ed25519"]
-        success = true
+        success = "unset"
         Dir.glob("#{Dir.home}/.ssh/id_*").each do |f|
           if suggested_keys.include?(File.basename f)
-            success = self.add_ssh_key(f) && success
+            success = !!(self.add_ssh_key(f) && success)
           end
         end
-        return success
+        if success == "unset"
+          puts "No common keys found".yellow
+          return false
+        else
+          return success
+        end
       end
     end
 
