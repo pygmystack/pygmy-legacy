@@ -29,6 +29,7 @@ class PygmyBin < Thor
 
     > $ pygmy up
   LONGDESC
+  option :addkey, type: :boolean, default:true
   def up
     exec_up(options)
   end
@@ -159,10 +160,12 @@ class PygmyBin < Thor
       puts "Error configuring local resolver".red
     end
 
-    if Pygmy::SshAgentAddKey.add_ssh_key
-      puts "Successfully injected ssh key".green
-    else
-      puts "Error injected ssh key".red
+    if options[:addkey]
+      if Pygmy::SshAgentAddKey.add_ssh_key
+        puts "Successfully injected ssh key".green
+      else
+        puts "Error injected ssh key".red
+      end
     end
   end
 
