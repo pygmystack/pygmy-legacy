@@ -19,7 +19,7 @@ class PygmyBin < Thor
     - haproxy: to forward HTTP and HTTPs requests to the docker containers running Drupal.
 
     - ssh-agent: to keep the ssh-agent at one single place, so that all other docker containers
-      can consume the ssh key.
+      can consume the ssh key. You can bypass automatically adding keys to the agent by using --no-addkey.
 
     On Linux: The local resolver (/etc/resolv.conf) will be configured to use the dnsmasq
     instance as a nameserver. (unless you add --no-resolver)
