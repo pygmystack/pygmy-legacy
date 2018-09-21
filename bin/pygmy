@@ -14,21 +14,23 @@ class PygmyBin < Thor
 
     When run, there will be two docker containers started:
 
-    - dnsmasq: to resolve DNS requests for your the domain *.docker.amazee.io
+    - dnsmasq: to resolve DNS requests for your the domain *.docker.amazee.io (unless you add --no-resolver)
 
     - haproxy: to forward HTTP and HTTPs requests to the docker containers running Drupal.
 
     - ssh-agent: to keep the ssh-agent at one single place, so that all other docker containers
-      can consume the ssh key.
+      can consume the ssh key. You can bypass automatically adding keys to the agent by using --no-addkey.
 
     On Linux: The local resolver (/etc/resolv.conf) will be configured to use the dnsmasq
-    instance as a nameserver.
+    instance as a nameserver. (unless you add --no-resolver)
 
     On Mac: A resolver file (/etc/resolver/docker.amazee.io) will be created to use the dnsmasq
-    instance as a nameserver for all *.docker.amazee.io domains.
+    instance as a nameserver for all *.docker.amazee.io domains. (unless you add --no-resolver)
 
     > $ pygmy up
   LONGDESC
+  option :addkey, type: :boolean, default:true
+  option :resolver, type: :boolean, default: true
   def up
     exec_up(options)
   end
@@ -117,10 +119,12 @@ class PygmyBin < Thor
 
   def exec_up(options)
 
-    if Pygmy::Dnsmasq.start
-      puts "Successfully started dnsmasq".green
-    else
-      puts "Error starting dnsmasq".red
+    if options[:resolver]
+      if Pygmy::Dnsmasq.start
+        puts "Successfully started dnsmasq".green
+      else
+        puts "Error starting dnsmasq".red
+      end
     end
 
     if Pygmy::Haproxy.start
@@ -153,16 +157,20 @@ class PygmyBin < Thor
       puts "Error starting ssh-agent".red
     end
 
-    if Pygmy::Resolv.configure
-      puts "Successfully configured local resolver".green
-    else
-      puts "Error configuring local resolver".red
+    if options[:resolver]
+      if Pygmy::Resolv.configure
+        puts "Successfully configured local resolver".green
+      else
+        puts "Error configuring local resolver".red
+      end
     end
 
-    if Pygmy::SshAgentAddKey.add_ssh_key
-      puts "Successfully injected ssh key".green
-    else
-      puts "Error injected ssh key".red
+    if options[:addkey]
+      if Pygmy::SshAgentAddKey.add_ssh_key
+        puts "Successfully injected ssh key".green
+      else
+        puts "Error injected ssh key".red
+      end
     end
   end
 
