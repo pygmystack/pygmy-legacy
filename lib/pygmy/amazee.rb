@@ -16,10 +16,11 @@ module Pygmy
     end
 
     def self.ls_cmd
-      list = Sh.run_command('docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none')
+      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none'
+      list = Sh.run_command(cmd)
       unless list.success?
         raise RuntimeError.new(
-            "Failed to list amazee docker images.  Command failed"
+            "Failed to list amazee docker images.  Command #{cmd} failed"
         )
       end
       list.stdout.split("\n")
