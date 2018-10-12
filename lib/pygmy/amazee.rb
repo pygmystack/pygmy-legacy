@@ -16,7 +16,7 @@ module Pygmy
     end
 
     def self.ls_cmd
-      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none'
+      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none | grep -v ssh | grep -v haproxy'
       list = Sh.run_command(cmd)
       unless list.success?
         raise RuntimeError.new(
