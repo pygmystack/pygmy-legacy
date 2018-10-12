@@ -110,6 +110,7 @@ class PygmyBin < Thor
     Pygmy::Haproxy.pull
     Pygmy::Mailhog.pull
     Pygmy::SshAgent.pull
+    Pygmy::Amazee.pull_all
     puts "Done. Recreating containers...".yellow
     exec_stop({:destroy => true})
     exec_up({})
