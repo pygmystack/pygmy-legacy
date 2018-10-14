@@ -261,57 +261,10 @@ class PygmyBin < Thor
       puts "Error while removing the resolver".red
     end
 
-    if Pygmy::Dnsmasq.stop
-      puts "Dnsmasq container stopped".green
-      if options[:destroy]
-        if Pygmy::Dnsmasq.delete
-          puts "Dnsmasq container successfully deleted".green
-        else
-          puts "Dnsmasq container failed to delete".red
-        end
-      end
-    else
-      puts "Dnsmasq container failed to stop".red
-    end
-
-    if Pygmy::Mailhog.stop
-      puts "Mailhog container stopped".green
-      if options[:destroy]
-        if Pygmy::Mailhog.delete
-          puts "Mailhog container successfully deleted".green
-        else
-          puts "Mailhog container failed to delete".red
-        end
-      end
-    else
-      puts "Mailhog container failed to stop".red
-    end
-
-    if Pygmy::SshAgent.stop
-      puts "ssh-agent container stopped".green
-      if options[:destroy]
-        if Pygmy::SshAgent.delete
-          puts "ssh-agent container successfully deleted".green
-        else
-          puts "ssh-agent container failed to delete".red
-        end
-      end
-    else
-      puts "ssh-agent container failed to stop".red
-    end
-
-    if Pygmy::Haproxy.stop
-      puts "Haproxy container stopped".green
-      if options[:destroy]
-        if Pygmy::Haproxy.delete
-          puts "Haproxy container successfully deleted".green
-        else
-          puts "Haproxy container failed to delete".red
-        end
-      end
-    else
-      puts "Haproxy container failed to stop".red
-    end
+    remove(Pygmy::Dnsmasq, "Dnsmasq", options)
+    remove(Pygmy::Mailhog, "Mailhog", options)
+    remove(Pygmy::SshAgent, "ssh-agent", options)
+    remove(Pygmy::Haproxy, "Haproxy", options)
 
   end
 end
