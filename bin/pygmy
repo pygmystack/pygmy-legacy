@@ -117,6 +117,11 @@ class PygmyBin < Thor
     exec_up({})
   end
 
+  # start unifies the process of starting a container
+  # in the standardized format and includes the error
+  # handling.
+  # * service is the service class (ie Pygmy::Haproxy)
+  # * name is the human readable name for output
   def start(service, name)
     if service.start
       puts "Successfully started #{name}".green
@@ -125,6 +130,10 @@ class PygmyBin < Thor
     end
   end
 
+  # status unifies the process of reporting the status
+  # of a container in the standardized format and
+  # includes the error handling.
+  # * service is the service class (ie Pygmy::Haproxy)
   def status(service, name)
     if service.running?
       puts "[*] #{name}: Running as docker container #{service.container_name}".green
@@ -133,6 +142,12 @@ class PygmyBin < Thor
     end
   end
 
+  # remove unifies the process of removing a container
+  # in the standardized format and includes the error
+  # handling.
+  # * service is the service class (ie Pygmy::Haproxy)
+  # * name is the human readable name for output
+  # * options is the options passed to pygmy on execution
   def remove(service, name, options)
     if service.stop
       puts "#{name} container stopped".green
