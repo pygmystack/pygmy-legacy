@@ -117,20 +117,38 @@ class PygmyBin < Thor
     exec_up({})
   end
 
-  def exec_up(options)
-
-    if options[:resolver]
-      if Pygmy::Dnsmasq.start
-        puts "Successfully started dnsmasq".green
-      else
-        puts "Error starting dnsmasq".red
-      end
-    end
-
-    if Pygmy::Haproxy.start
-      puts "Successfully started haproxy".green
+  def start(service, name)
+    if service.start
+      puts "Successfully started #{name}".green
     else
-      puts "Error starting haproxy".red
+      puts "Error starting #{name}".red
+    end
+  end
+
+  def status(service, name)
+    if service.running?
+      puts "[*] #{name}: Running as docker container #{service.container_name}".green
+    else
+      puts "[*] #{name} is not running".red
+    end
+  end
+
+  def remove(service, name, options)
+    if service.stop
+      puts "#{name} container stopped".green
+      if options[:destroy]
+        if service.delete
+          puts "#{name} container successfully deleted".green
+        else
+          puts "#{name} container failed to delete".red
+        end
+      end
+    else
+      puts "#{name} container failed to stop".red
+    end
+  end
+
+  def exec_up(options)
     end
 
     if Pygmy::DockerNetwork.create
