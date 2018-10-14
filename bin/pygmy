@@ -194,17 +194,9 @@ class PygmyBin < Thor
 
   def exec_status(_options)
 
-    if Pygmy::Dnsmasq.running?
-      puts "[*] Dnsmasq: Running as docker container #{Pygmy::Dnsmasq.container_name}".green
-    else
-      puts "[*] Dnsmasq is not running".red
-    end
-
-    if Pygmy::Haproxy.running?
-      puts "[*] Haproxy: Running as docker container #{Pygmy::Haproxy.container_name}".green
-    else
-      puts "[*] Haproxy is not running".red
-    end
+    status(Pygmy::Dnsmasq, "Dnsmasq")
+    status(Pygmy::Haproxy, "Haproxy")
+    status(Pygmy::Mailhog, "Mailhog")
 
     if Pygmy::DockerNetwork.exists?
       puts "[*] Network: Exists as name #{Pygmy::DockerNetwork.network_name}".green
@@ -216,12 +208,6 @@ class PygmyBin < Thor
       puts "[*] Network: Haproxy #{Pygmy::DockerNetwork.haproxy_name} connected to #{Pygmy::DockerNetwork.network_name}".green
     else
       puts "[*] Haproxy is not connected to #{Pygmy::DockerNetwork.network_name}".red
-    end
-
-    if Pygmy::Mailhog.running?
-      puts "[*] Mailhog: Running as docker container #{Pygmy::Mailhog.container_name}".green
-    else
-      puts "[*] Mailhog is not running".red
     end
 
     if Pygmy::Resolv.has_our_nameserver?
