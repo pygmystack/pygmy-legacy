@@ -149,7 +149,14 @@ class PygmyBin < Thor
   end
 
   def exec_up(options)
+
+    if options[:resolver]
+      start(Pygmy::Dnsmasq, "dnsmasq")
     end
+
+    start(Pygmy::Haproxy, "haproxy")
+    start(Pygmy::Mailhog, "mailhog")
+    start(Pygmy::SshAgent, "ssh-agent")
 
     if Pygmy::DockerNetwork.create
       puts "Successfully created amazeeio network".green
@@ -161,18 +168,6 @@ class PygmyBin < Thor
       puts "Successfully connected haproxy to amazeeio network".green
     else
       puts "Error connecting haproxy to amazeeio network".red
-    end
-
-    if Pygmy::Mailhog.start
-      puts "Successfully started mailhog".green
-    else
-      puts "Error starting mailhog".red
-    end
-
-    if Pygmy::SshAgent.start
-      puts "Successfully started ssh-agent".green
-    else
-      puts "Error starting ssh-agent".red
     end
 
     if options[:resolver]
