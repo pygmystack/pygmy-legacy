@@ -16,7 +16,11 @@ module Pygmy
     end
 
     def self.ls_cmd
-      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none | grep -v ssh | grep -v haproxy'
+      # cmd will not ever report non-0 exit codes, but we will
+      # check the results below. This will prevent failures when
+      # there are no amazee images pulled and the update command
+      # is called. To do this, we add ' | cat' to the end of it.
+      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none | grep -v ssh | grep -v haproxy | cat'
       list = Sh.run_command(cmd)
       unless list.success?
         raise RuntimeError.new(
