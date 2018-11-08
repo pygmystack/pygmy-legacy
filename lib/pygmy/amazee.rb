@@ -16,18 +16,24 @@ module Pygmy
     end
 
     def self.ls_cmd
-      # cmd will not ever report non-0 exit codes, but we will
-      # check the results below. This will prevent failures when
-      # there are no amazee images pulled and the update command
-      # is called. To do this, we add ' | cat' to the end of it.
-      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}" | grep amazeeio/ | grep -v none | grep -v ssh | grep -v haproxy | cat'
+      cmd = 'docker image ls --format "{{.Repository}}:{{.Tag}}"'
       list = Sh.run_command(cmd)
-      unless list.success?
-        raise RuntimeError.new(
-            "Failed to list amazee docker images.  Command #{cmd} failed"
-        )
+
+      # For better handling of containers, we should compare our
+      # results against a whitelist instead of preferential
+      # treatment of linux pipes.
+      containers = list.stdout.split("\n")
+      amazee_containers = []
+      containers.each do |container|
+        # Selectively target amazeeio/* images.
+        if container.include?('amazeeio/')
+          # Filter out items which we don't want.
+          unless container.include?("none") || container.include?("ssh-agent") || container.include?("haproxy")
+            amazee_containers.push(container)
+          end
+        end
       end
-      list.stdout.split("\n")
+      amazee_containers
     end
 
     def self.pull_all
