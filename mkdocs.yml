@@ -1,11 +1,8 @@
 site_name: Pygmy Documentation
-
-nav:
-- Home: index.md
 theme: readthedocs
 
 nav:
-  - index.md
+  - Pygmy: index.md
   - Installation: installation.md
   - Usage: usage.md
   - Update: update.md
