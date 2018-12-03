@@ -9,10 +9,6 @@ nav:
   - Installation: installation.md
   - Usage: usage.md
   - Update: update.md
-#   - local_docker_development.md
-#   - Drupal Site Containers: drupal_site_containers.md
-#   - connect_to_mysql_from_external.md
-#   - map_addtitional_ports.md
   - Troubleshooting: troubleshooting.md
   - SSH Agent: ssh_agent.md
 
