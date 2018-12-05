@@ -13,8 +13,6 @@ nav:
 #   - connect_to_mysql_from_external.md
 #   - map_addtitional_ports.md
 
-requirements_file: docs/requirements.txt
-
 markdown_extensions:
     - toc:
         permalink: true
