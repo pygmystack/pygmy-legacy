@@ -1,13 +1,19 @@
 site_name: Pygmy Documentation
 theme: readthedocs
 
-pages:
+nav:
   - Pygmy: index.md
   - Installation: installation.md
   - Usage: usage.md
   - Update: update.md
   - Troubleshooting: troubleshooting.md
   - SSH Agent: ssh_agent.md
+#   - local_docker_development.md
+#   - Drupal Site Containers: drupal_site_containers.md
+#   - connect_to_mysql_from_external.md
+#   - map_addtitional_ports.md
+
+requirements_file: docs/requirements.txt
 
 markdown_extensions:
     - toc:

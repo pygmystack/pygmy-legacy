@@ -12,7 +12,12 @@ As everything on amazee.io works with key authentication sometimes you might run
 
     Could not load API JWT Token, error was: 'lagoon@ssh.lagoon.amazeeio.cloud: Permission denied (publickey).'
 
-1. Check if you see the sshkey inside your container with `ssh-add -L`
+    or
+
+     drupal@example.amazee.io:~/public_html/docroot (staging)$ drush @master ssh
+     Permission denied (publickey).
+
+1. Check if you see the sshkey inside your container with `ssh-add -L` (if you get `Could not open a connection to your authentication agent.` head straight to step 3.)
 2. Check if you see your sshkey in `pygmy status`
 3. If you don't see the key in `pymgy status` run `pygmy addkey`. You should see `Successfully added ssh key` if the key addition was successful
 4. After that you need to recreate the containers `docker-compose up -d --force`
