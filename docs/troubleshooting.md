@@ -233,3 +233,8 @@ With the Process ID you can now run following command:
 > sudo kill [Process ID]
 
 
+### Haproxy does not start - Failure EADDRINUSE
+
+```Error response from daemon: driver failed programming external connectivity on endpoint amazeeio-haproxy (8e510609d6d62a82b1342ee72d5ea5edd598216527cf865706147018731436a8): Error starting userland proxy: Bind for 0.0.0.0:80: unexpected error (Failure EADDRINUSE)
+Error: failed to start containers: amazeeio-haproxy```
+
