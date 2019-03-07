@@ -170,7 +170,7 @@ class PygmyBin < Thor
       if Pygmy::SshAgentAddKey.add_ssh_key
         puts "Successfully injected ssh key".green
       else
-        puts "Error injected ssh key".red
+        puts "Error injecting ssh key".red
       end
     end
   end
@@ -229,7 +229,7 @@ class PygmyBin < Thor
       if Pygmy::SshAgentAddKey.add_ssh_key(key)
         puts "Successfully added ssh key".green
       else
-        puts "Error added ssh key".red
+        puts "Error adding ssh key".red
       end
     else
       puts "ssh-agent is not running, cannot add key".red
