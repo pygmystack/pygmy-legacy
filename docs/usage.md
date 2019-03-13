@@ -35,7 +35,7 @@ Call the `addkey` command with the **absolute** path to the key you would like t
 
     pygmy addkey /Users/amazeeio/.ssh/my_other_key
 
-    Enter passphrase for /Users/amazeeio/.ssh/my_other_ke:
+    Enter passphrase for /Users/amazeeio/.ssh/my_other_key:
     Identity added: /Users/amazeeio/.ssh/my_other_key (/Users/amazeeio/.ssh/my_other_key)
 
 ## Checking the status
