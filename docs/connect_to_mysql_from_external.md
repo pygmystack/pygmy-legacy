@@ -21,7 +21,7 @@ Or via `docker-compose` inside a Drupal repository
 
 ### `linux` Get ip from container
 
-If you are on Linux and run docker natively, you also need to get the IP of the container
+If you are on Linux and run docker native, you also need to get the IP of the container
 
     $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' changeme.net.docker.amazee.io
     172.17.0.4
@@ -30,7 +30,7 @@ If you are on Linux and run docker natively, you also need to get the IP of the 
 
 |          | Linux                         | OS X                          |
 |----------|-------------------------------|-------------------------------|
-| IP/Host  | ip from container             | `docker.amazee.io`            |
+| IP/Host  | IP from container             | `docker.amazee.io`            |
 | Port     | published port from container | published port from container |
 | Username | `drupal`                      | `drupal`                      |
 | Password | `drupal`                      | `drupal`                      |

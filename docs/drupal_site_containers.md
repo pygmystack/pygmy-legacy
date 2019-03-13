@@ -17,7 +17,7 @@ During [Part I](./local_docker_development.md#part-i-shared-docker-containers) w
 1. Visit https://github.com/amazeeio/docker or clone https://github.com/amazeeio/docker.git into a folder on your computer
 2. Copy the desired example file into your Drupal directory (see descriptions below). Use `example-docker-compose-drupal.yml` if unsure.
 3. Rename the file to `docker-compose.yml`
-4. Edit the file according to your needs, change at least the hostname. _Btw: It's perfectly fine to commit this file into your git repo, so others that are also using amazee.io docker can use it as well._
+4. Edit the file according to your needs, change at least the host name. _BTW: It's perfectly fine to commit this file into your git repository, so others that are also using amazee.io docker can use it as well._
 5. Run in the same directory as the `docker-compose.yml`:
 
         docker-compose up -d
@@ -46,7 +46,7 @@ If you want to connect to a container wherever you are right now with your bash:
 
 ### Drush from your host machine
 
-To use drush, you can either connect to the container as above, or add a bash function that will connect for you to run your drush command. To add the function, add this to your .bashrc file:
+To use Drush, you can either connect to the container as above, or add a bash function that will connect for you to run your Drush command. To add the function, add this to your .bashrc file:
 
 Bash:
 ```

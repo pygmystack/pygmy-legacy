@@ -1,8 +1,8 @@
 # Update pygmy
 
-`pygmy` gets new releases sometimes and who doesn't like them, so much excitement for new functionality!
+As `pygmy` is released regularly you should also take care of updating pygmy.
 
-As rubygems does not remove old versions of gems when updating, you should remove old version after a new version has been installed.
+As ruby gems does not remove old versions of gems when updating, you should remove old version after a new version has been installed.
 
 First update:
 

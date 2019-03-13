@@ -3,7 +3,7 @@
 ## Prerequisites
 Make sure you have the following dependencies installed:
 
-* Docker, see [the official guides](https://docs.docker.com/engine/installation/) how to do that
+* Docker, see [the official guides](https://docs.docker.com/engine/installation/) on how to install docker on your system.
 * Ruby, see [the official guides ](https://www.ruby-lang.org/en/documentation/installation/)
 
 ## Installation
