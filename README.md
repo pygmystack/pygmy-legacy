@@ -8,4 +8,4 @@
 * If on Mac with Docker for Mac: Creates the file `/etc/resolver/docker.amazee.io` which tells OS X to forward DNS requests for `*.docker.amazee.io` to the dnsmasq container
 * Tries to add the ssh key in `~/.ssh/id_rsa` to the ssh-agent container (no worries if that is the wrong key, you can add more any time)
 
-You can find more documentation here: [https://docs.amazee.io/local_docker_development/pygmy.html](https://docs.amazee.io/local_docker_development/pygmy.html)
+You can find more documentation here: [https://pygmy.readthedocs.io](https://pygmy.readthedocs.io)
