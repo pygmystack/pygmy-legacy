@@ -9,13 +9,20 @@ module Pygmy
     end
 
     def self.add_ssh_key(key = "#{Dir.home}/.ssh/id_rsa")
+      if Gem.win_platform?
+        key_agent = "windows-key-add"
+        key_destination = "/key"
+      else
+        key_agent = "ssh-add"
+        key_destination = "/#{key}"
+      end
       if File.file?(key)
         system("docker run --rm -it " \
-        "--volume=#{key}:/#{key} " \
+        "--volume=#{key}:#{key_destination} " \
         "--volumes-from=amazeeio-ssh-agent " \
         "--name=#{Shellwords.escape(self.container_name)} " \
         "#{Shellwords.escape(self.image_name)} " \
-        "ssh-add #{key}")
+        "#{key_agent} #{key_destination}")
       else
         puts "ssh key: #{key}, does not exist, ignoring...".yellow
         return false

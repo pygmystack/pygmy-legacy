@@ -44,6 +44,9 @@ module Pygmy
 
 
     def self.configure
+      if Gem.win_platform?
+        return ResolvWin.create_resolver?
+      end
       if Linux.osx?
         return ResolvOsx.create_resolver?
       end
@@ -63,6 +66,9 @@ module Pygmy
     end
 
     def self.clean
+      if Gem.win_platform?
+        return ResolvWin.clean?
+      end
       if Linux.osx?
         return ResolvOsx.clean?
       end
@@ -86,6 +92,9 @@ module Pygmy
     end
 
     def self.has_our_nameserver?
+      if Gem.win_platform?
+        return ResolvWin.resolver_status?
+      end
       if Linux.osx?
         return ResolvOsx.resolver_file_exists?
       end

@@ -22,4 +22,15 @@ module Pygmy
       })
     end
   end
+
+  module PowerShell
+    def self.run_command(command)
+      stdout = `powershell #{command}`
+      OpenStruct.new({
+        success?: $?.exitstatus == 0,
+        exitstatus: $?.exitstatus,
+        stdout: stdout
+      })
+    end
+  end
 end
