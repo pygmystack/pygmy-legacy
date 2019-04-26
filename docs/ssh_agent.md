@@ -18,7 +18,7 @@ Or for legacy systems:
      Permission denied (publickey).
 
 1. Check if you see the SSH Key inside your container with `ssh-add -L` <br>
-   If you get `Could not open a connection to your authentication agent.` head straight to **step 3.**
+   If you get `Could not open a connection to your authentication agent.` or `The agent has no identities.` head straight to **step 3.**
 2. Check if you see your SSH Key in `pygmy status`
 3. If you don't see the key in `pymgy status` run `pygmy addkey`. You should see `Successfully added ssh key` if the key addition was successful.
 4. After that you need to recreate the containers `docker-compose up -d --force`
