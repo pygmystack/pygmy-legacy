@@ -4,9 +4,21 @@ Per default your SSH Key at `~/.ssh/id_rsa` is added to the Docker containers fr
 
 If you need another key, read the documentation of [`pygmy`](linux_pygmy.md) about this.
 
+## How it works
+1. `pygmy` starts `amazeeio/ssh-agent` container with a volume `/tmp/amazeeio_ssh-agent`
+2. `pygmy` adds a default SSH key from the host into this volume
+3. `docker-compose.yml` should have volume inclusion specified for CLI container:
+  ```
+  volumes_from:
+    - container:amazeeio-ssh-agent
+  ```
+4. When CLI container starts, the volume is mounted and an entrypoint script adds SHH key into agent.
+  @see https://github.com/amazeeio/lagoon/blob/master/images/php/cli/10-ssh-agent.sh
 
-# Troubleshooting
-## SSH Key issues
+Running `ssh-add -L` within CLI container should show that the SSH key is correctly loaded.
+
+## Troubleshooting
+### SSH Key issues
 
 As everything on amazee.io works with key authentication sometimes you might run into issues where the drush aliases aren't displayed or you can't connect to the servers.
 
