@@ -57,3 +57,8 @@ Run `pygmy status` and `pygmy` will tell you how it feels right now and which ss
 During regular development `pygmy stop` is perfectly fine, it will keep the Docker containers still alive, just in stopped state.
 If you like to cleanup though, use `pygmy down` to really remove the Docker containers.
 
+## Access HAProxy statistic page and logs  
+
+HAProxy service has statistics web page already enabled. To access the page, just point the browser to [http://yourapp.docker.amazee.io/stats](http://yourapp.docker.amazee.io/stats).  
+
+To watch at haproxy container logs, use the `docker logs amazeeio-haproxy` command with standard `docker logs` options like `-f` to follow.
