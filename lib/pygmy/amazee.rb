@@ -1,8 +1,17 @@
 require_relative 'docker_service'
+require 'colorize'
 
 module Pygmy
   class Amazee
     extend Pygmy::DockerService
+
+    def self.prefix
+      "amazeeio/"
+    end
+
+    def self.ignore_list
+      %w(none ssh-agent haproxy)
+    end
 
     def self.pull(image_name)
       puts "Pulling Docker Image #{Shellwords.escape(image_name)}".yellow
@@ -26,11 +35,15 @@ module Pygmy
       amazee_containers = []
       containers.each do |container|
         # Selectively target amazeeio/* images.
-        if container.include?('amazeeio/')
+        if container.include?(self.prefix)
+          include_container = true
           # Filter out items which we don't want.
-          unless container.include?("none") || container.include?("ssh-agent") || container.include?("haproxy")
-            amazee_containers.push(container)
+          self.ignore_list.each do |item|
+            if container.include?(item)
+              include_container = false
+            end
           end
+          amazee_containers.push(container) if include_container
         end
       end
       amazee_containers
@@ -40,7 +53,7 @@ module Pygmy
       list = self.ls_cmd
       unless list.nil?
         list.each do |image|
-          pull(image)
+          self.pull(image)
         end
       end
     end
