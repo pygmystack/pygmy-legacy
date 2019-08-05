@@ -5,7 +5,7 @@ module Pygmy
     extend Pygmy::DockerService
 
     def self.image_name
-      'andyshinn/dnsmasq:2.75'
+      'andyshinn/dnsmasq:2.78'
     end
 
     def self.container_name
@@ -21,7 +21,7 @@ module Pygmy
     end
 
     def self.run_cmd(domain = self.domain, addr = self.addr)
-      "docker run -d -p 53:53/tcp -p 53:53/udp --name=#{Shellwords.escape(self.container_name)} " \
+      "docker run -d -p 6053:53/tcp -p 6053:53/udp --name=#{Shellwords.escape(self.container_name)} " \
       "--cap-add=NET_ADMIN #{Shellwords.escape(self.image_name)} -A /#{Shellwords.escape(domain)}/#{Shellwords.escape(addr)}"
     end
   end
