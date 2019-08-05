@@ -5,7 +5,7 @@ module Pygmy
     extend Pygmy::DockerService
 
     def self.image_name
-      'andyshinn/dnsmasq:2.75'
+      'andyshinn/dnsmasq:2.78'
     end
 
     def self.container_name
