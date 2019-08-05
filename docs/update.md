@@ -39,6 +39,19 @@ check the correct version:
     Pygmy - Version: 0.9.4
 
 
+## I see errors after the upgrade
+
+If you see following error after the pygmy upgrade you might have installed 2 pygmy versions next to eachother
+```
+> pygmy version
+/Users/user1/.rvm/gems/ruby-2.2.1/gems/pygmy-0.9.11/lib/pygmy/version.rb:2: warning: previous definition of VERSION was here
+/Users/user1/.rvm/gems/ruby-2.2.1/gems/pygmy-0.9.11/lib/pygmy/version.rb:3: warning: previous definition of DATE was here
+/Users/user1/.rvm/gems/ruby-2.2.1/gems/pygmy-0.9.10/lib/pygmy/version.rb:2: warning: already initialized constant Pygmy::VERSION
+/Users/user1/.rvm/gems/ruby-2.2.1/gems/pygmy-0.9.10/lib/pygmy/version.rb:3: warning: already initialized constant Pygmy::DATE
+```
+
+Run `gem uninstall pygmy` and remove the old versions.
+
 ## Update Docker Containers with `pygmy`
 
 `pygmy` can update shared docker containers for you:
@@ -46,5 +59,4 @@ check the correct version:
     pygmy update
 
 After it updated all containers, it will recreate them as well.
-
 
