@@ -40,7 +40,6 @@ GEM
 
 PLATFORMS
   ruby
-  unknown
 
 DEPENDENCIES
   byebug (~> 8.2)
@@ -48,6 +47,9 @@ DEPENDENCIES
   pygmy!
   rake (~> 10.5)
   rspec (~> 3.4)
+
+RUBY VERSION
+   ruby 2.3.8p459
 
 BUNDLED WITH
    1.17.3
