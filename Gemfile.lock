@@ -40,6 +40,7 @@ GEM
 
 PLATFORMS
   ruby
+  unknown
 
 DEPENDENCIES
   byebug (~> 8.2)
@@ -49,4 +50,4 @@ DEPENDENCIES
   rspec (~> 3.4)
 
 BUNDLED WITH
-   1.10.6
+   1.17.3
