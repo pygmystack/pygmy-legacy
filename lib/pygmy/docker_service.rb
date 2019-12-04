@@ -2,12 +2,12 @@ require 'shellwords'
 
 module Pygmy
   module DockerService
-    def start
+    def start(options)
       unless self.running?
         success = if self.container_exists?
                     Sh.run_command(self.start_cmd).success?
                   else
-                    Sh.run_command(self.run_cmd).success?
+                    Sh.run_command(self.run_cmd(options)).success?
                   end
         unless success
           raise RuntimeError.new(

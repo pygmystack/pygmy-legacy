@@ -12,9 +12,9 @@ module Pygmy
       'amazeeio-haproxy'
     end
 
-    def self.run_cmd
+    def self.run_cmd(options)
       "docker run -d " \
-      "-p 80:80 -p 443:443 " \
+      "-p #{options[:port]}:#{options[:port]} " \
       "--volume=/var/run/docker.sock:/tmp/docker.sock " \
       "--restart=always " \
       "--name=#{Shellwords.escape(self.container_name)} " \

@@ -31,6 +31,7 @@ class PygmyBin < Thor
   LONGDESC
   option :addkey, type: :boolean, default:true
   option :resolver, type: :boolean, default: true
+  option :port, type: :string, default: "80"
   def up
     exec_up(options)
   end
@@ -90,6 +91,7 @@ class PygmyBin < Thor
     > $ pygmy restart [-d|--destroy]
   LONGDESC
   option :destroy, type: :boolean, aliases: '-d', default: false
+  option :port, type: :string, default: "80"
   def restart
     exec_stop(options)
     exec_up(options)
@@ -120,15 +122,20 @@ class PygmyBin < Thor
 
   def exec_up(options)
 
+    if options[:port] != "80" && options[:port] != "443"
+      puts "Incompatible port '#{options[:port]}' was used for input --port, please use 80 or 443."
+      exit
+    end
+
     if options[:resolver]
-      if Pygmy::Dnsmasq.start
+      if Pygmy::Dnsmasq.start(options)
         puts "Successfully started dnsmasq".green
       else
         puts "Error starting dnsmasq".red
       end
     end
 
-    if Pygmy::Haproxy.start
+    if Pygmy::Haproxy.start(options)
       puts "Successfully started haproxy".green
     else
       puts "Error starting haproxy".red
@@ -146,13 +153,13 @@ class PygmyBin < Thor
       puts "Error connecting haproxy to amazeeio network".red
     end
 
-    if Pygmy::Mailhog.start
+    if Pygmy::Mailhog.start(options)
       puts "Successfully started mailhog".green
     else
       puts "Error starting mailhog".red
     end
 
-    if Pygmy::SshAgent.start
+    if Pygmy::SshAgent.start(options)
       puts "Successfully started ssh-agent".green
     else
       puts "Error starting ssh-agent".red

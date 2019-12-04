@@ -12,7 +12,7 @@ module Pygmy
       'amazeeio-ssh-agent'
     end
 
-    def self.run_cmd
+    def self.run_cmd(options)
       "docker run -d " \
       "--restart=always " \
       "--name=#{Shellwords.escape(self.container_name)} " \
