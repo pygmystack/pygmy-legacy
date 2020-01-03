@@ -6,7 +6,8 @@ To start `pygmy` run following command
 
 `pygmy` will now start all the required Docker containers and add the ssh key.
 
-If you are on Ubuntu you might need to run pygmy with `pygmy up --no-resolver`
+If you are on Ubuntu you might need to run pygmy with `pygmy up --no-resolver`  
+If you want to do not start `mailhog`, you can use `pygmy up --no-mailhog`  
 
 **All done?** Head over to [Drupal Docker Containers](./drupal_site_containers.md) to learn how to work with docker containers.
 

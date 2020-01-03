@@ -10,13 +10,15 @@ class PygmyBin < Thor
 
   desc 'up', 'Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)'
   long_desc <<-LONGDESC
-    Bring up pygmy services (dnsmasq, haproxy, resolv, ssh-agent)
+    Bring up pygmy services (dnsmasq, haproxy, resolv, ssh-agent, mailhog)
 
-    When run, there will be two docker containers started:
+    When run, there will be four docker containers started:
 
     - dnsmasq: to resolve DNS requests for your the domain *.docker.amazee.io (unless you add --no-resolver)
 
     - haproxy: to forward HTTP and HTTPs requests to the docker containers running Drupal.
+
+    - mailhog: to catch all outgoing emails from your development environment (unless you add --no-mailhog).
 
     - ssh-agent: to keep the ssh-agent at one single place, so that all other docker containers
       can consume the ssh key. You can bypass automatically adding keys to the agent by using --no-addkey.
@@ -31,6 +33,7 @@ class PygmyBin < Thor
   LONGDESC
   option :addkey, type: :boolean, default:true
   option :resolver, type: :boolean, default: true
+  option :mailhog, type: :boolean, default: true
   def up
     exec_up(options)
   end
@@ -146,10 +149,12 @@ class PygmyBin < Thor
       puts "Error connecting haproxy to amazeeio network".red
     end
 
-    if Pygmy::Mailhog.start
-      puts "Successfully started mailhog".green
-    else
-      puts "Error starting mailhog".red
+    if options[:mailhog]
+      if Pygmy::Mailhog.start
+        puts "Successfully started mailhog".green
+      else
+        puts "Error starting mailhog".red
+      end
     end
 
     if Pygmy::SshAgent.start
