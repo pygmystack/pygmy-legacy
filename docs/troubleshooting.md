@@ -158,7 +158,16 @@ If during the start of Docker containers you see an error like that:
 
 This means that another service (can be another Docker container, or in case of Linux based systems another service like an installed nginx) is already using this Port.
 
-You should stop this service or Docker container first.
+You should stop this service (e.g. Apache) or Docker container first.
+
+On Linux or Mac, you can check for the services running on port 80 like so:
+  ```
+  // Check current user
+  lsof -i :80
+  
+  // Check sudo user
+  sudo lsof -i :80
+  ```
 
 ### I get an error like `Service "drupal" mounts volumes from "amazeeio-ssh-agent", which is not the name of a service or container.`
 
