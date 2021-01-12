@@ -9,7 +9,7 @@ module Pygmy
     end
 
     def self.container_name
-      'mailhog.docker.amazee.io'
+      'amazeeio-mailhog'
     end
 
     def self.domain
@@ -25,6 +25,7 @@ module Pygmy
       '-e "MH_UI_BIND_ADDR=0.0.0.0:80" ' \
       '-e "MH_API_BIND_ADDR=0.0.0.0:80" ' \
       '-e "AMAZEEIO=AMAZEEIO" ' \
+      '-e "AMAZEEIO_URL=mailhog.docker.amazee.io" ' \
       "#{Shellwords.escape(self.image_name)}"
     end
   end
