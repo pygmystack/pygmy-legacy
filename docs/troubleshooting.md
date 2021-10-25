@@ -224,7 +224,7 @@ If during starting of `pygmy` you see an error like that:
         Error starting userland proxy: listen tcp 0.0.0.0:53: bind: address already in use
         Error: failed to start containers: amazeeio-dnsmasq
 
-You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with `pygmy`. The resolution depends on Ubuntu version.  
+You are probably on Ubuntu when the default DNS server started by Ubuntu conflicts with the one we provide in `pygmy`. The resolution depends on OS distro and version.
 
 #### Ubuntu before 18.04
 You should disable it, see here: http://askubuntu.com/a/233223 (no worries, the default started DNS server is actually not used, so it's safe to disable it).
@@ -242,4 +242,14 @@ With the Process ID you can now run following command:
 
 > sudo kill [Process ID]
 
+#### macOS Big Sur
+
+Find the Command and Process that is listening on the address and port using
+`lsof -i -P` like this:
+
+    sudo lsof -i -P | grep -i "LISTEN"
+
+If the Command is "com.docker" then find the container using `docker ps` and
+stop it with `docker stop [container-name]`. Otherwise, with the Process ID
+(PID) you can simply kill the process using `sudo kill [PID]`.
 
