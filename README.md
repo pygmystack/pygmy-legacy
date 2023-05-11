@@ -1,4 +1,7 @@
-# Pygmy
+This version of pygmy is no longer supported - please use https://github.com/pygmystack/pygmy instead.
+
+
+# Pygmy (Ruby version) - ARCHIVED
 
 `pygmy` is the single tool needed to get the local [amazee.io](https://amazee.io) Docker Drupal Development Environment running on your Linux based system. Its built to work with [Docker for Mac](https://docs.docker.com/docker-for-mac/)! (quite a lot for such a [small whale](https://en.wikipedia.org/wiki/Pygmy_sperm_whale) 🐳)
 
