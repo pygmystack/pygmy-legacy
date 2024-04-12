@@ -7,14 +7,8 @@ Gem::Specification.new do |s|
   s.name        = 'pygmy'
   s.version     = Pygmy::VERSION
   s.date        = Pygmy::DATE
-  s.summary     = 'pygmy provides the required servies to run the ' \
-    'amazee.io Drupal local development environment on linux.'
-  s.description = 'To fully and easy run a local Drupal development system you ' \
-    'need more then just a docker container with the Drupal running. ' \
-    'Default development workflows involves running multiple sites at the same time, ' \
-    'interacting with other services which are authenticated via ssh and more.' \
-    'Pygmy makes usre that the required Docker containers are started and that you' \
-    'comfortably can access the Drupal Containers just via the browser.'
+  s.summary     = 'This version of pygmy is no longer supported - please use https://github.com/pygmystack/pygmy instead.'
+  s.description = 'This version of pygmy is no longer supported - please use https://github.com/pygmystack/pygmy instead.'
   s.authors     = ['Michael Schmid']
   s.email       = 'michael@amazee.io'
   s.files       = ['lib/pygmy.rb'] + Dir['lib/pygmy/**/*']
